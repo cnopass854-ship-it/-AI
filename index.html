@@ -1,0 +1,2490 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#05050c">
+<title>APEX — สภา AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;700&family=Noto+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#05050c;--p1:#0c0c16;--p2:#10101c;--p3:#141420;
+  --b1:#1a1a28;--b2:#22223a;--b3:#2a2a48;
+  --green:#00ff88;--red:#ff2255;--blue:#22ddff;
+  --gold:#ffcc33;--orange:#ff7733;--purple:#cc88ff;
+  --pink:#ff55cc;--teal:#00ddaa;--silver:#9090b0;
+  --tx:#eaeaf8;--mu:#50507a;--mu2:#30304a;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx)}
+body{font-family:'Noto Sans Thai',sans-serif;display:flex;flex-direction:column}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;transition:opacity 1s}
+#splash.gone{opacity:0;pointer-events:none}
+.sp-word{font-family:'Bebas Neue';letter-spacing:.15em;line-height:1}
+.sp-apex{font-size:6rem;background:linear-gradient(135deg,var(--green),var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 40px rgba(0,255,136,.5))}
+.sp-council{font-size:1.4rem;color:var(--purple);letter-spacing:.35em;margin-top:-.3rem}
+.sp-sub{font-family:'IBM Plex Mono';font-size:.5rem;color:var(--mu);letter-spacing:.2em;text-align:center;line-height:2.2}
+.sp-line{width:240px;height:1px;background:linear-gradient(90deg,transparent,var(--purple),var(--blue),transparent);margin:.3rem 0}
+.sp-prog{width:200px;height:2px;background:var(--b1);border-radius:2px;overflow:hidden}
+.sp-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--blue),var(--purple));animation:sfill 3.2s ease forwards}
+@keyframes sfill{from{width:0}to{width:100%}}
+
+/* HEADER */
+#hdr{flex-shrink:0;display:flex;align-items:center;gap:.6rem;padding:.55rem .85rem;background:rgba(5,5,12,.97);backdrop-filter:blur(24px);border-bottom:1px solid var(--b1);position:relative;z-index:100}
+.logo{font-family:'Bebas Neue';font-size:1.2rem;letter-spacing:.12em;color:var(--green);text-shadow:0 0 16px rgba(0,255,136,.4);flex-shrink:0}
+.hdr-mid{flex:1;display:flex;align-items:center;gap:.4rem}
+#xp-lbl{font-family:'IBM Plex Mono';font-size:.46rem;color:var(--gold);white-space:nowrap}
+#stk-lbl{font-family:'IBM Plex Mono';font-size:.46rem;color:var(--red);background:rgba(255,34,85,.08);border:1px solid rgba(255,34,85,.2);padding:.1em .35em;border-radius:20px;flex-shrink:0}
+.key-row{display:flex;gap:3px;cursor:pointer}
+.kd{width:8px;height:8px;border-radius:50%;background:var(--b2);transition:all .3s}
+.kd.on{background:var(--green);box-shadow:0 0 8px rgba(0,255,136,.7)}
+.kd.half{background:var(--gold);box-shadow:0 0 8px rgba(255,204,51,.5)}
+
+/* SCROLL */
+#scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:6rem}
+#scroll::-webkit-scrollbar{display:none}
+
+/* BOTTOM NAV */
+#bnav{position:fixed;bottom:0;left:0;right:0;background:rgba(5,5,12,.97);backdrop-filter:blur(24px);border-top:1px solid var(--b1);display:flex;overflow-x:auto;padding-bottom:env(safe-area-inset-bottom,0)}
+#bnav::-webkit-scrollbar{display:none}
+.nb{flex:1;min-width:52px;display:flex;flex-direction:column;align-items:center;padding:.42rem .04rem .34rem;gap:.06rem;background:transparent;border:none;color:var(--mu);font-family:'Noto Sans Thai';font-size:.38rem;cursor:pointer;transition:color .2s;white-space:nowrap}
+.nb .ni{font-size:1.1rem;transition:all .2s;display:block}
+.nb.on{color:var(--green)}
+.nb.on .ni{transform:scale(1.18);filter:drop-shadow(0 0 5px rgba(0,255,136,.7))}
+
+/* PAGES */
+.pg{display:none;animation:fadeUp .3s ease}
+.pg.on{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* UTILS */
+.btn{font-family:'Noto Sans Thai';font-size:.74rem;font-weight:700;padding:.44em 1.05em;border-radius:8px;border:none;cursor:pointer;transition:all .14s;display:inline-flex;align-items:center;gap:.3em;white-space:nowrap}
+.btn:active{transform:scale(.95)}
+.btn:disabled{opacity:.3;pointer-events:none}
+.bg{background:var(--green);color:#05050c}
+.bp{background:var(--purple);color:#05050c}
+.bb{background:var(--blue);color:#05050c}
+.br{background:var(--red);color:#fff}
+.bgold{background:var(--gold);color:#05050c}
+.borange{background:var(--orange);color:#fff}
+.bghost{background:transparent;border:1px solid var(--b2);color:var(--mu)}
+.brow{display:flex;gap:.35rem;flex-wrap:wrap}
+.fi{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--b1);border-radius:8px;padding:.45rem .7rem;color:var(--tx);font-family:'Noto Sans Thai';font-size:.8rem;outline:none;transition:border-color .2s}
+.fi:focus{border-color:rgba(0,255,136,.4)}
+.fi::placeholder{color:var(--mu)}
+textarea.fi{resize:none}
+.fsel{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--b1);border-radius:8px;padding:.45rem .7rem;color:var(--tx);font-family:'IBM Plex Mono';font-size:.6rem;outline:none;-webkit-appearance:none;cursor:pointer}
+.fsel option{background:var(--p1)}
+.hscroll{display:flex;gap:.32rem;overflow-x:auto;padding-bottom:.28rem;scrollbar-width:none}
+.hscroll::-webkit-scrollbar{display:none}
+.pill{font-family:'IBM Plex Mono';font-size:.5rem;white-space:nowrap;padding:.3em .75em;border-radius:20px;border:1px solid var(--b2);background:transparent;color:var(--mu);cursor:pointer;transition:all .16s;flex-shrink:0}
+.pill.on{background:var(--purple);color:#05050c;border-color:var(--purple);font-weight:700}
+.pill:active{transform:scale(.95)}
+.slbl{font-family:'Bebas Neue';font-size:.72rem;letter-spacing:.22em;color:var(--mu);margin:.8rem 0 .4rem}
+.chip{font-family:'IBM Plex Mono';font-size:.48rem;padding:.12em .52em;border-radius:20px;display:inline-block}
+.cg{background:rgba(0,255,136,.1);color:var(--green);border:1px solid rgba(0,255,136,.18)}
+.cb{background:rgba(34,221,255,.1);color:var(--blue);border:1px solid rgba(34,221,255,.18)}
+.cr{background:rgba(255,34,85,.1);color:var(--red);border:1px solid rgba(255,34,85,.18)}
+.cy{background:rgba(255,204,51,.1);color:var(--gold);border:1px solid rgba(255,204,51,.18)}
+.co{background:rgba(255,119,51,.1);color:var(--orange);border:1px solid rgba(255,119,51,.18)}
+.cp{background:rgba(204,136,255,.1);color:var(--purple);border:1px solid rgba(204,136,255,.18)}
+.ct{background:rgba(0,221,170,.1);color:var(--teal);border:1px solid rgba(0,221,170,.18)}
+.stag{font-family:'IBM Plex Mono';font-size:.5rem;padding:.13em .46em;border-radius:4px;display:inline-block}
+.sok{color:var(--green);background:rgba(0,255,136,.08)}
+.serr{color:var(--red);background:rgba(255,34,85,.08)}
+.sload{color:var(--gold);background:rgba(255,204,51,.08)}
+
+/* COUNCIL HERO */
+.council-hero{padding:1.1rem .85rem .7rem;background:radial-gradient(ellipse at 20% 50%,rgba(204,136,255,.09) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(34,221,255,.07) 0%,transparent 55%),var(--bg);border-bottom:1px solid var(--b1);position:relative;overflow:hidden}
+.council-hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--purple),var(--blue),transparent)}
+.council-hero-badge{font-family:'IBM Plex Mono';font-size:.44rem;letter-spacing:.25em;color:var(--purple);background:rgba(204,136,255,.1);border:1px solid rgba(204,136,255,.2);padding:.18em .65em;border-radius:20px;display:inline-block;margin-bottom:.5rem}
+.council-hero-title{font-family:'Bebas Neue';font-size:2.6rem;letter-spacing:.08em;color:var(--tx);line-height:.95;margin-bottom:.35rem}
+.council-hero-title span{color:var(--purple);text-shadow:0 0 25px rgba(204,136,255,.5)}
+.council-hero-sub{font-size:.7rem;color:var(--mu);line-height:1.75}
+.council-stats-row{display:flex;gap:.45rem;margin-top:.75rem}
+.cs-box{flex:1;background:rgba(255,255,255,.025);border:1px solid var(--b1);border-radius:8px;padding:.45rem;text-align:center}
+.cs-n{font-family:'Bebas Neue';font-size:1.3rem;color:var(--gold);line-height:1}
+.cs-l{font-family:'IBM Plex Mono';font-size:.4rem;color:var(--mu);margin-top:.06rem}
+
+/* MODE GRID — BIG CARDS */
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:.45rem}
+.mode-card{background:var(--p1);border:2px solid var(--b1);border-radius:14px;padding:.8rem .72rem;cursor:pointer;transition:all .22s;position:relative;overflow:hidden}
+.mode-card::before{content:'';position:absolute;inset:0;background:var(--mc,transparent);opacity:0;transition:opacity .22s}
+.mode-card.on{border-color:var(--mcb,var(--purple));box-shadow:0 0 20px rgba(204,136,255,.15)}
+.mode-card.on::before{opacity:.07}
+.mode-card:active{transform:scale(.96)}
+.mc-icon{font-size:2rem;display:block;margin-bottom:.42rem;position:relative}
+.mc-name{font-family:'Bebas Neue';font-size:1rem;letter-spacing:.06em;color:var(--tx);margin-bottom:.18rem;position:relative}
+.mc-desc{font-size:.58rem;color:var(--mu);line-height:1.55;position:relative}
+.mode-card.on .mc-name{color:var(--mcc,var(--purple))}
+.mc-badge{position:absolute;top:.52rem;right:.52rem;font-family:'IBM Plex Mono';font-size:.38rem;padding:.1em .45em;border-radius:20px;color:var(--mcc,var(--purple));background:rgba(204,136,255,.12);border:1px solid rgba(204,136,255,.2)}
+
+/* AGENT CARDS */
+.agent-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.38rem}
+.agent-card{background:var(--p1);border:2px solid var(--b1);border-radius:12px;padding:.6rem .52rem;cursor:pointer;transition:all .2s;position:relative;text-align:center}
+.agent-card.on{border-color:var(--ac,var(--green));box-shadow:0 0 14px rgba(0,255,136,.12)}
+.agent-card:active{transform:scale(.95)}
+.ac-ico{font-size:1.55rem;display:block;margin-bottom:.22rem}
+.ac-name{font-family:'Bebas Neue';font-size:.72rem;letter-spacing:.04em;line-height:1.1;margin-bottom:.1rem}
+.ac-role{font-size:.48rem;color:var(--mu);line-height:1.35}
+.ac-prov{font-family:'IBM Plex Mono';font-size:.38rem;color:var(--mu2);margin-top:.18rem}
+.ac-check{position:absolute;top:.38rem;right:.38rem;width:16px;height:16px;border-radius:50%;background:var(--b2);display:flex;align-items:center;justify-content:center;font-size:.52rem;transition:all .2s}
+.agent-card.on .ac-check{background:var(--green);color:#05050c}
+
+/* UPLOAD ZONE */
+.upload-zone{border:2px dashed var(--b2);border-radius:12px;padding:1rem;text-align:center;cursor:pointer;transition:all .22s;background:var(--p2);margin-bottom:.5rem}
+.upload-zone.drag,.upload-zone:active{border-color:var(--blue);background:rgba(34,221,255,.04)}
+.uz-icon{font-size:1.8rem;display:block;margin-bottom:.35rem}
+.uz-text{font-size:.72rem;color:var(--mu);line-height:1.7}
+.uz-hint{font-family:'IBM Plex Mono';font-size:.46rem;color:var(--mu2);margin-top:.22rem}
+.file-chips{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.5rem}
+.fchip{display:flex;align-items:center;gap:.28rem;background:var(--p3);border:1px solid var(--b2);border-radius:7px;padding:.26rem .5rem;font-family:'IBM Plex Mono';font-size:.5rem;color:var(--blue);max-width:180px}
+.fchip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.fchip-rm{cursor:pointer;color:var(--mu);font-size:.72rem;flex-shrink:0}
+
+/* TOPIC AREA */
+.topic-area{background:var(--p1);border:1px solid var(--b1);border-radius:12px;overflow:hidden;margin-bottom:.6rem}
+.topic-hd{display:flex;align-items:center;gap:.4rem;padding:.5rem .75rem;background:rgba(204,136,255,.06);border-bottom:1px solid var(--b1)}
+.topic-hd-dot{width:7px;height:7px;border-radius:50%;background:var(--purple);box-shadow:0 0 6px rgba(204,136,255,.6)}
+.topic-hd-txt{font-family:'IBM Plex Mono';font-size:.5rem;color:var(--purple);letter-spacing:.1em}
+.topic-body{padding:.65rem}
+
+/* COUNCIL CHAT */
+.council-arena{background:var(--p1);border:1px solid var(--b1);border-radius:14px;overflow:hidden;margin-bottom:.55rem}
+.arena-header{padding:.62rem .85rem;background:linear-gradient(90deg,rgba(204,136,255,.1),rgba(34,221,255,.05),transparent);border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between}
+.arena-title{font-family:'Bebas Neue';font-size:.95rem;letter-spacing:.08em;color:var(--purple)}
+.arena-meta{font-family:'IBM Plex Mono';font-size:.44rem;color:var(--mu)}
+.arena-msgs{max-height:55vh;overflow-y:auto;display:flex;flex-direction:column}
+.arena-msgs::-webkit-scrollbar{display:none}
+
+/* COUNCIL TURN */
+.cturn{padding:.65rem .82rem;border-bottom:1px solid var(--b1);animation:fadeUp .28s ease;position:relative}
+.cturn:last-child{border-bottom:none}
+.cturn.verdict{background:linear-gradient(135deg,rgba(204,136,255,.07),rgba(34,221,255,.03))}
+.cturn-head{display:flex;align-items:center;gap:.45rem;margin-bottom:.38rem}
+.cturn-ico{font-size:1.2rem;flex-shrink:0}
+.cturn-name{font-family:'Bebas Neue';font-size:.82rem;letter-spacing:.05em}
+.cturn-prov{font-family:'IBM Plex Mono';font-size:.4rem;color:var(--mu);background:rgba(255,255,255,.04);border:1px solid var(--b1);padding:.1em .4em;border-radius:20px}
+.cturn-round{font-family:'IBM Plex Mono';font-size:.38rem;color:var(--mu);margin-left:auto}
+.cturn-body{font-size:.74rem;line-height:1.92;white-space:pre-wrap;word-break:break-word;color:var(--tx)}
+.cturn-body.loading{color:var(--mu);font-style:italic;animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:.4}50%{opacity:1}}
+.cturn-actions{display:flex;gap:.3rem;margin-top:.42rem}
+.cturn-act{font-family:'IBM Plex Mono';font-size:.44rem;padding:.15em .5em;border-radius:20px;border:1px solid var(--b2);background:transparent;color:var(--mu);cursor:pointer;transition:all .15s}
+.cturn-act:hover{border-color:var(--purple);color:var(--purple)}
+
+.round-sep{display:flex;align-items:center;gap:.5rem;padding:.42rem .82rem;background:rgba(204,136,255,.05);border-bottom:1px solid var(--b1)}
+.round-sep-line{flex:1;height:1px;background:linear-gradient(90deg,var(--purple),transparent)}
+.round-sep-line.r{background:linear-gradient(270deg,var(--purple),transparent)}
+.round-sep-label{font-family:'Bebas Neue';font-size:.75rem;letter-spacing:.12em;color:var(--purple);white-space:nowrap}
+
+/* FOLLOW UP */
+.followup-box{background:var(--p1);border:1px solid var(--b1);border-radius:12px;overflow:hidden;margin-bottom:.6rem}
+.followup-msgs{max-height:32vh;overflow-y:auto;display:flex;flex-direction:column;gap:.38rem;padding:.65rem}
+.followup-msgs::-webkit-scrollbar{display:none}
+.cm{max-width:92%;font-size:.74rem;line-height:1.9;padding:.52rem .72rem;border-radius:10px;animation:fadeUp .2s ease;word-break:break-word;white-space:pre-wrap}
+.cm.user{align-self:flex-end;background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.14)}
+.cm.ai{align-self:flex-start;background:rgba(255,34,85,.05);border:1px solid rgba(255,34,85,.1)}
+.cm.sys{align-self:center;font-family:'IBM Plex Mono';font-size:.48rem;color:var(--mu);background:rgba(255,255,255,.015);border:1px solid var(--b1);padding:.18em .52em;border-radius:20px;white-space:normal}
+.cm.thinking{color:var(--mu);font-style:italic;align-self:flex-start;animation:blink 1.4s infinite}
+.followup-inp{display:flex;gap:.32rem;padding:.48rem;border-top:1px solid var(--b1);align-items:flex-end}
+.followup-ta{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--b1);border-radius:8px;padding:.42rem .62rem;color:var(--tx);font-family:'Noto Sans Thai';font-size:.78rem;outline:none;resize:none;max-height:85px;min-height:32px}
+.followup-ta:focus{border-color:rgba(204,136,255,.4)}
+.followup-ta::placeholder{color:var(--mu)}
+.send-btn{width:34px;height:34px;border-radius:8px;border:none;display:flex;align-items:center;justify-content:center;font-size:.85rem;cursor:pointer;flex-shrink:0;transition:all .16s;background:var(--purple);color:#05050c}
+.send-btn:active{transform:scale(.88)}
+.send-btn:disabled{opacity:.3;pointer-events:none}
+
+/* TUTOR */
+.tutor-box{background:var(--p1);border:1px solid var(--b1);border-radius:12px;overflow:hidden}
+.tutor-msgs{min-height:160px;max-height:42vh;overflow-y:auto;display:flex;flex-direction:column;gap:.45rem;padding:.72rem;scroll-behavior:smooth}
+.tutor-msgs::-webkit-scrollbar{display:none}
+.tutor-inp{display:flex;gap:.32rem;padding:.5rem;border-top:1px solid var(--b1);align-items:flex-end}
+.tutor-ta{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--b1);border-radius:8px;padding:.42rem .62rem;color:var(--tx);font-family:'Noto Sans Thai';font-size:.78rem;outline:none;resize:none;max-height:90px;min-height:32px}
+.tutor-ta:focus{border-color:rgba(255,34,85,.4)}
+.tutor-ta::placeholder{color:var(--mu)}
+.att-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--b2);background:transparent;display:flex;align-items:center;justify-content:center;font-size:.82rem;cursor:pointer;flex-shrink:0;color:var(--mu)}
+
+/* SETTINGS */
+.set-card{background:var(--p1);border:1px solid var(--b1);border-radius:12px;overflow:hidden;margin-bottom:.75rem}
+.set-hd{font-family:'IBM Plex Mono';font-size:.48rem;letter-spacing:.18em;color:var(--mu);padding:.5rem .8rem;border-bottom:1px solid var(--b1);background:rgba(255,255,255,.012)}
+.set-row{display:flex;align-items:flex-start;gap:.58rem;padding:.72rem .8rem;border-bottom:1px solid var(--b1)}
+.set-row:last-child{border-bottom:none}
+.set-ico{font-size:.95rem;width:20px;text-align:center;flex-shrink:0}
+.set-body{flex:1}
+.set-body h4{font-size:.76rem;font-weight:700;margin-bottom:.06rem}
+.set-body p{font-size:.6rem;color:var(--mu);line-height:1.5}
+
+/* API PROVIDER ROW */
+.aprov{background:var(--p2);border:1px solid var(--b1);border-radius:10px;margin:.5rem .8rem;padding:.6rem}
+.aprov-head{display:flex;align-items:center;gap:.48rem;margin-bottom:.38rem}
+.aprov-ico{font-size:1.1rem;flex-shrink:0}
+.aprov-name{font-size:.76rem;font-weight:700;flex:1}
+.aprov-badge{font-family:'IBM Plex Mono';font-size:.4rem;padding:.1em .42em;border-radius:20px}
+.aprov-model{font-family:'IBM Plex Mono';font-size:.44rem;color:var(--mu);margin-bottom:.32rem}
+.aprov-inp{display:flex;gap:.3rem;align-items:center}
+.aprov-inp .fi{font-family:'IBM Plex Mono';font-size:.58rem;padding:.34rem .55rem}
+.aprov-status{font-family:'IBM Plex Mono';font-size:.48rem;margin-top:.22rem;display:none}
+
+/* QUIZ */
+.qbox{background:var(--p1);border:1px solid var(--b1);border-radius:12px;padding:.82rem;margin-bottom:.6rem}
+.q-text{font-size:.85rem;font-weight:600;line-height:1.85;margin-bottom:.75rem}
+.q-opts{display:flex;flex-direction:column;gap:.38rem}
+.qo{width:100%;background:rgba(255,255,255,.03);border:1px solid var(--b1);border-radius:8px;padding:.6rem .78rem;font-size:.77rem;text-align:left;color:var(--tx);font-family:'Noto Sans Thai';cursor:pointer;transition:all .15s}
+.qo:active{transform:scale(.99)}
+.qo.correct{background:rgba(0,255,136,.1);border-color:var(--green);color:var(--green);pointer-events:none}
+.qo.wrong{background:rgba(255,34,85,.08);border-color:var(--red);color:var(--red);pointer-events:none}
+.qo.disabled{pointer-events:none;opacity:.35}
+.q-fb{font-size:.7rem;line-height:1.7;margin-top:.48rem;padding:.34rem .52rem;border-radius:8px;display:none}
+.q-fb.c{display:block;color:var(--green);background:rgba(0,255,136,.06)}
+.q-fb.w{display:block;color:var(--red);background:rgba(255,34,85,.06)}
+
+/* ROADMAP */
+.rn{display:flex;gap:.52rem;position:relative}
+.rn:not(:last-child)::before{content:'';position:absolute;left:12px;top:27px;width:1px;height:calc(100% + 4px);background:linear-gradient(to bottom,var(--b2),transparent)}
+.rd{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono';font-size:.46rem;font-weight:700;border:2px solid;flex-shrink:0;margin-top:.22rem;cursor:pointer;transition:all .25s;user-select:none}
+.rd.ts{border-color:var(--blue);color:var(--blue)}.rd.tu{border-color:var(--orange);color:var(--orange)}.rd.tg{border-color:var(--gold);color:var(--gold)}.rd.done{background:var(--green);border-color:var(--green);color:#05050c}
+.rc{flex:1;background:var(--p1);border:1px solid var(--b1);border-radius:10px;padding:.65rem;margin-bottom:.52rem;transition:border-color .2s}
+.rc.done{border-color:rgba(0,255,136,.15)}
+.rc h3{font-size:.77rem;font-weight:700;margin-bottom:.12rem;display:flex;justify-content:space-between;align-items:flex-start;gap:.25rem}
+.rc p{font-size:.63rem;color:var(--mu);line-height:1.6}
+.rtags{display:flex;flex-wrap:wrap;gap:.2rem;margin-top:.32rem}
+.rt{font-family:'IBM Plex Mono';font-size:.42rem;padding:.08em .44em;border-radius:20px}
+.rt.s{background:rgba(34,221,255,.1);color:var(--blue)}.rt.u{background:rgba(255,119,51,.1);color:var(--orange)}.rt.g{background:rgba(255,204,51,.1);color:var(--gold)}
+
+/* COURSES */
+.cc{background:var(--p1);border:1px solid var(--b1);border-radius:12px;overflow:hidden;margin-bottom:.5rem}
+.cc.open{border-color:rgba(0,255,136,.15)}
+.cc-head{display:flex;align-items:center;gap:.5rem;padding:.65rem .78rem;cursor:pointer}
+.cc-code{font-family:'IBM Plex Mono';font-size:.45rem;color:var(--green);min-width:36px;flex-shrink:0}
+.cc-name{flex:1;font-size:.76rem;font-weight:600}
+.cc-src{font-family:'IBM Plex Mono';font-size:.42rem;color:var(--mu);max-width:65px;text-align:right;line-height:1.4;flex-shrink:0}
+.cc-v{font-size:.5rem;color:var(--mu);transition:transform .25s}
+.cc.open .cc-v{transform:rotate(180deg)}
+.cc-body{display:none;padding:.65rem .78rem;border-top:1px solid var(--b1)}
+.cc.open .cc-body{display:block}
+.chkbox{width:20px;height:20px;border-radius:5px;border:2px solid var(--b2);display:inline-flex;align-items:center;justify-content:center;font-size:.6rem;cursor:pointer;transition:all .2s}
+.chkbox.on{background:var(--green);border-color:var(--green);color:#05050c}
+.diff-dots{display:flex;gap:2px;margin-top:.3rem}
+.dd{width:6px;height:6px;border-radius:50%;background:var(--b2)}.dd.on{background:var(--green)}.dd.hot{background:var(--red)}
+
+/* IMAGE */
+.img-result-box{background:var(--p1);border:1px solid var(--b1);border-radius:12px;overflow:hidden;margin-bottom:.5rem;min-height:180px;display:flex;align-items:center;justify-content:center;position:relative}
+.img-result-box img{width:100%;border-radius:12px;display:block}
+.img-loader{display:flex;flex-direction:column;align-items:center;gap:.65rem;padding:1.8rem}
+.iloader-dots{display:flex;gap:7px}
+.iloader-dots span{width:10px;height:10px;border-radius:50%;animation:ipulse 1.5s infinite}
+.iloader-dots span:nth-child(1){background:var(--purple);animation-delay:0s}
+.iloader-dots span:nth-child(2){background:var(--blue);animation-delay:.2s}
+.iloader-dots span:nth-child(3){background:var(--green);animation-delay:.4s}
+@keyframes ipulse{0%,80%,100%{transform:scale(.5);opacity:.3}40%{transform:scale(1);opacity:1}}
+
+/* STAT */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.45rem;margin-bottom:.8rem}
+.stat-box{background:var(--p1);border:1px solid var(--b1);border-radius:10px;padding:.65rem .3rem;text-align:center}
+.sn{font-family:'Bebas Neue';font-size:1.75rem;color:var(--gold);line-height:1}
+.sl{font-family:'IBM Plex Mono';font-size:.41rem;color:var(--mu);margin-top:.1rem}
+
+/* TERMINAL */
+.terminal{background:#000;border:1px solid rgba(0,255,136,.2);border-radius:10px;overflow:hidden;margin-bottom:.55rem}
+.term-bar{background:rgba(0,255,136,.04);padding:.4rem .65rem;font-family:'IBM Plex Mono';font-size:.5rem;color:var(--green);display:flex;align-items:center;gap:.38rem;border-bottom:1px solid rgba(0,255,136,.08)}
+.term-out{min-height:60px;max-height:145px;overflow-y:auto;padding:.6rem;font-family:'IBM Plex Mono';font-size:.56rem;color:var(--green);line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.term-out::-webkit-scrollbar{display:none}
+.term-ta{width:100%;background:rgba(0,255,136,.015);border:none;border-top:1px solid rgba(0,255,136,.08);padding:.48rem .65rem;color:var(--green);font-family:'IBM Plex Mono';font-size:.64rem;outline:none;resize:none;min-height:44px;max-height:90px}
+.term-ta::placeholder{color:rgba(0,255,136,.22)}
+.term-brow{display:flex;gap:.3rem;padding:.4rem .65rem;background:rgba(0,255,136,.015);border-top:1px solid rgba(0,255,136,.08);flex-wrap:wrap}
+
+/* QUICK TOPIC CARDS */
+.quick-topics{display:grid;grid-template-columns:1fr 1fr;gap:.38rem;margin-bottom:.65rem}
+.qt-card{background:var(--p1);border:1px solid var(--b1);border-radius:10px;padding:.62rem .65rem;cursor:pointer;transition:all .18s;display:flex;gap:.42rem;align-items:flex-start}
+.qt-card:active{transform:scale(.97);border-color:var(--purple)}
+.qt-ico{font-size:1.15rem;flex-shrink:0;margin-top:.04rem}
+.qt-text{font-size:.62rem;color:var(--mu);line-height:1.55;flex:1}
+
+/* PROGRESS BAR */
+.prog-bar{height:3px;background:var(--b1);border-radius:2px;overflow:hidden;margin-top:.28rem}
+.prog-fill{height:100%;border-radius:2px;transition:width .5s}
+
+/* ═══ DARK/LIGHT MODE ═══ */
+body.light{--bg:#f0f0f8;--p1:#ffffff;--p2:#e8e8f4;--p3:#dcdcf0;--b1:#d0d0e8;--b2:#c0c0dc;--b3:#b0b0cc;--tx:#1a1a2e;--mu:#6060a0;--mu2:#9090c0}
+body.light #splash{background:#f0f0f8}
+body.light #hdr{background:rgba(240,240,248,.97)}
+body.light #bnav{background:rgba(240,240,248,.97)}
+body.light .terminal{background:#1a1a2e}
+.theme-toggle{width:38px;height:20px;border-radius:10px;background:var(--b2);border:none;cursor:pointer;position:relative;transition:background .3s;flex-shrink:0}
+.theme-toggle::after{content:'';position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform .25s;font-size:.6rem}
+body.light .theme-toggle{background:var(--gold)}
+body.light .theme-toggle::after{transform:translateX(18px)}
+
+/* ═══ QUIZ TIMER ═══ */
+.quiz-timer-wrap{display:flex;align-items:center;gap:.45rem;margin-bottom:.55rem;background:var(--p1);border:1px solid var(--b1);border-radius:10px;padding:.48rem .72rem}
+.timer-ring{position:relative;width:38px;height:38px;flex-shrink:0}
+.timer-svg{transform:rotate(-90deg)}
+.timer-bg{fill:none;stroke:var(--b2);stroke-width:4}
+.timer-arc{fill:none;stroke:var(--green);stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset .9s linear,stroke .3s}
+.timer-num{font-family:'Bebas Neue';font-size:.9rem;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--tx)}
+.timer-label{font-family:'IBM Plex Mono';font-size:.5rem;color:var(--mu)}
+.timer-label strong{color:var(--green);font-size:.72rem}
+
+/* ═══ NOTES ═══ */
+.note-card{background:var(--p1);border:1px solid var(--b1);border-radius:12px;padding:.75rem;margin-bottom:.48rem;position:relative;transition:border-color .2s}
+.note-card:hover{border-color:var(--purple)}
+.note-card-top{display:flex;align-items:center;gap:.4rem;margin-bottom:.35rem}
+.note-tag{font-family:'IBM Plex Mono';font-size:.44rem;padding:.1em .48em;border-radius:20px;border:1px solid var(--b2);color:var(--mu)}
+.note-date{font-family:'IBM Plex Mono';font-size:.44rem;color:var(--mu2);margin-left:auto}
+.note-body{font-size:.74rem;line-height:1.78;white-space:pre-wrap;color:var(--tx)}
+.note-del{position:absolute;top:.5rem;right:.5rem;background:transparent;border:none;color:var(--mu);cursor:pointer;font-size:.72rem;opacity:0;transition:opacity .2s}
+.note-card:hover .note-del{opacity:1}
+.note-inp-area{background:var(--p1);border:1px solid var(--b1);border-radius:12px;overflow:hidden;margin-bottom:.55rem}
+.note-inp-bar{display:flex;align-items:center;gap:.35rem;padding:.48rem .65rem;border-bottom:1px solid var(--b1);background:rgba(204,136,255,.04)}
+.note-inp-bar span{font-family:'IBM Plex Mono';font-size:.5rem;color:var(--purple)}
+.note-ta{width:100%;background:transparent;border:none;outline:none;padding:.65rem;color:var(--tx);font-family:'Noto Sans Thai';font-size:.78rem;resize:none;min-height:72px}
+.note-ta::placeholder{color:var(--mu)}
+.note-footer{display:flex;align-items:center;gap:.35rem;padding:.42rem .65rem;border-top:1px solid var(--b1)}
+.note-tag-sel{background:transparent;border:1px solid var(--b1);border-radius:20px;padding:.15em .6em;font-family:'IBM Plex Mono';font-size:.5rem;color:var(--mu);outline:none;cursor:pointer}
+
+/* ═══ PROGRESS CHART ═══ */
+.chart-wrap{background:var(--p1);border:1px solid var(--b1);border-radius:12px;padding:.75rem;margin-bottom:.65rem}
+.chart-title{font-family:'Bebas Neue';font-size:.88rem;letter-spacing:.12em;color:var(--mu);margin-bottom:.55rem}
+.bar-chart{display:flex;align-items:flex-end;gap:.28rem;height:90px;position:relative}
+.bar-chart::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(to top,transparent,transparent calc(100%/4 - 1px),rgba(255,255,255,.03) calc(100%/4));pointer-events:none}
+.bc-bar{flex:1;background:linear-gradient(to top,var(--green),var(--blue));border-radius:4px 4px 0 0;transition:height .5s;position:relative;min-width:8px;cursor:pointer}
+.bc-bar:hover::after{content:attr(data-v);position:absolute;top:-1.4rem;left:50%;transform:translateX(-50%);font-family:'IBM Plex Mono';font-size:.44rem;color:var(--tx);white-space:nowrap;background:var(--p3);padding:.08em .35em;border-radius:4px}
+.bc-lbl{font-family:'IBM Plex Mono';font-size:.38rem;color:var(--mu);text-align:center;margin-top:.2rem}
+.chart-row{display:flex;justify-content:space-between;align-items:flex-end;gap:.28rem}
+
+/* ═══ LEADERBOARD ═══ */
+.lb-row{display:flex;align-items:center;gap:.58rem;padding:.62rem .75rem;border-bottom:1px solid var(--b1);transition:background .15s}
+.lb-row:last-child{border-bottom:none}
+.lb-row:hover{background:rgba(255,255,255,.02)}
+.lb-rank{font-family:'Bebas Neue';font-size:1.1rem;min-width:24px;text-align:center}
+.lb-rank.gold{color:var(--gold)}.lb-rank.silver{color:var(--silver)}.lb-rank.bronze{color:var(--orange)}
+.lb-name{flex:1;font-size:.76rem;font-weight:600}
+.lb-xp{font-family:'IBM Plex Mono';font-size:.55rem;color:var(--green)}
+.lb-badge{font-family:'IBM Plex Mono';font-size:.44rem;padding:.1em .42em;border-radius:20px;background:rgba(204,136,255,.1);color:var(--purple);border:1px solid rgba(204,136,255,.18)}
+.lb-you{background:rgba(0,255,136,.05)!important;border-left:3px solid var(--green)}
+
+/* ═══ REMINDER / NOTIFICATION ═══ */
+.reminder-card{background:var(--p1);border:1px solid var(--b1);border-radius:12px;overflow:hidden;margin-bottom:.48rem}
+.reminder-active{border-color:rgba(0,255,136,.3);background:rgba(0,255,136,.03)}
+.reminder-row{display:flex;align-items:center;gap:.55rem;padding:.62rem .75rem}
+.reminder-ico{font-size:1.1rem;flex-shrink:0}
+.reminder-body{flex:1}
+.reminder-body h4{font-size:.76rem;font-weight:600;margin-bottom:.04rem}
+.reminder-body p{font-size:.6rem;color:var(--mu)}
+.sw{width:38px;height:20px;background:var(--b2);border-radius:10px;cursor:pointer;position:relative;transition:background .2s;border:none;flex-shrink:0}
+.sw::after{content:'';position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform .2s}
+.sw.on{background:var(--green)}.sw.on::after{transform:translateX(18px)}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div>
+    <div class="sp-word sp-apex">APEX</div>
+    <div class="sp-word sp-council">AI COUNCIL</div>
+  </div>
+  <div class="sp-line"></div>
+  <div class="sp-sub">สภา AI · โต้เถียง · วิเคราะห์ · อัปโหลดได้<br>Multi-API · Claude · GPT · Gemini · Groq</div>
+  <div class="sp-prog"><div class="sp-fill"></div></div>
+</div>
+
+<!-- HEADER -->
+<div id="hdr">
+  <div class="logo">⚡APEX</div>
+  <div class="hdr-mid">
+    <span id="xp-lbl">Lv0 · 0XP</span>
+    <span id="stk-lbl">🔥0</span>
+  </div>
+  <button class="theme-toggle" id="theme-toggle" title="Dark/Light Mode"></button>
+  <div class="key-row" id="key-row" onclick="goPage('settings')" title="API Keys">
+    <div class="kd" id="kd-c"></div>
+    <div class="kd" id="kd-o"></div>
+    <div class="kd" id="kd-g"></div>
+    <div class="kd" id="kd-q"></div>
+    <div class="kd" id="kd-m"></div>
+  </div>
+</div>
+
+<!-- SCROLL -->
+<div id="scroll">
+
+<!-- ████ COUNCIL ████ -->
+<div class="pg on" id="pg-council">
+
+  <!-- HERO -->
+  <div class="council-hero">
+    <div class="council-hero-badge">🏛 AI COUNCIL CHAMBER</div>
+    <div class="council-hero-title"><span>สภา</span> AI</div>
+    <div class="council-hero-sub">รวม AI หลายเจ้า · โต้เถียง · วิเคราะห์ · ตัดสิน<br>อัปโหลดรูป-ไฟล์ได้ · ทุกคำถามได้คำตอบจาก AI หลายมุมมอง</div>
+    <div class="council-stats-row">
+      <div class="cs-box"><div class="cs-n" id="cs-sessions">0</div><div class="cs-l">SESSIONS</div></div>
+      <div class="cs-box"><div class="cs-n" id="cs-agents">0</div><div class="cs-l">AI ACTIVE</div></div>
+      <div class="cs-box"><div class="cs-n" id="cs-xp">0</div><div class="cs-l">XP EARNED</div></div>
+    </div>
+  </div>
+
+  <div style="padding:.78rem .85rem 1rem">
+
+  <!-- MODE SELECT -->
+  <div class="slbl" style="margin-top:.3rem">▸ โหมดการประชุม</div>
+  <div class="mode-grid" id="mode-grid"></div>
+
+  <!-- AGENT SELECT -->
+  <div class="slbl">▸ เลือก AI สมาชิกสภา <span class="chip cb" style="font-size:.4rem">คลิกเปิด/ปิด</span></div>
+  <div class="agent-grid" id="agent-grid"></div>
+
+  <!-- ROUNDS / DEPTH -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.42rem;margin-bottom:.55rem">
+    <div>
+      <div style="font-family:'IBM Plex Mono';font-size:.46rem;color:var(--mu);margin-bottom:.25rem">จำนวนรอบ</div>
+      <select class="fsel" id="sel-rounds">
+        <option value="1">1 รอบ — เร็ว</option>
+        <option value="2">2 รอบ</option>
+        <option value="3" selected>3 รอบ — มาตรฐาน</option>
+        <option value="5">5 รอบ — ลึก</option>
+      </select>
+    </div>
+    <div>
+      <div style="font-family:'IBM Plex Mono';font-size:.46rem;color:var(--mu);margin-bottom:.25rem">ภาษา AI</div>
+      <select class="fsel" id="sel-lang">
+        <option value="th">🇹🇭 ภาษาไทย</option>
+        <option value="en">🇺🇸 English</option>
+        <option value="both">🌐 ทั้งสอง</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- UPLOAD -->
+  <div class="slbl">▸ อัปโหลดไฟล์ (ไม่บังคับ)</div>
+  <div class="upload-zone" id="upload-zone">
+    <span class="uz-icon">📎</span>
+    <div class="uz-text">แตะหรือลากไฟล์มาวาง<br><strong style="color:var(--blue)">รูปภาพ · PDF · Code · TXT</strong></div>
+    <div class="uz-hint">PNG · JPG · PDF · TXT · MD · JS · PY · JSON · MAX 10MB</div>
+  </div>
+  <input type="file" id="file-in" multiple accept="image/*,.pdf,.txt,.md,.js,.py,.json,.csv,.html" style="display:none">
+  <div class="file-chips" id="file-chips"></div>
+
+  <!-- TOPIC -->
+  <div class="slbl">▸ หัวข้อ / คำถาม</div>
+  <div class="topic-area">
+    <div class="topic-hd">
+      <div class="topic-hd-dot"></div>
+      <div class="topic-hd-txt">COUNCIL TOPIC</div>
+      <button class="pill" id="topic-clear-btn" style="margin-left:auto;font-size:.42rem">ล้าง</button>
+    </div>
+    <div class="topic-body">
+      <textarea class="fi" id="council-topic" rows="3" placeholder="พิมพ์หัวข้อ · โจทย์คณิต · คำถาม · หรืออัปโหลดรูปแล้วถาม&#10;เช่น: พิสูจน์ √2 เป็นอตรรกยะ / วิเคราะห์โค้ดนี้ / อธิบาย Fourier Transform" style="margin-top:0"></textarea>
+      <div class="hscroll" id="topic-quick" style="margin-top:.42rem"></div>
+      <div class="brow" style="margin-top:.55rem">
+        <button class="btn bp" id="council-go" style="flex:1;font-size:.82rem">🏛 เปิดประชุมสภา</button>
+        <button class="btn bghost" id="council-stop" style="display:none">⏹ หยุด</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ARENA -->
+  <div id="council-arena" style="display:none">
+    <div class="council-arena">
+      <div class="arena-header">
+        <span class="arena-title">🏛 สภา AI — กำลังประชุม</span>
+        <span class="arena-meta" id="arena-meta"></span>
+      </div>
+      <div class="arena-msgs" id="arena-msgs"></div>
+    </div>
+
+    <!-- FOLLOW-UP -->
+    <div class="slbl">▸ ถามเพิ่มเติมกับสภา</div>
+    <div class="followup-box">
+      <div class="followup-msgs" id="followup-msgs">
+        <div class="cm sys">ถามต่อได้เลย — AI จำบริบทการประชุมทั้งหมด</div>
+      </div>
+      <div class="followup-inp">
+        <button class="att-btn" onclick="$('council-attach').click()">📎</button>
+        <input type="file" id="council-attach" accept="image/*" style="display:none">
+        <textarea class="followup-ta" id="followup-input" placeholder="ถามเพิ่ม..." rows="1"></textarea>
+        <button class="send-btn" id="followup-send">➤</button>
+      </div>
+    </div>
+
+    <!-- EXPORT -->
+    <div class="brow" style="margin-bottom:1rem">
+      <button class="btn bghost" id="export-txt-btn" style="font-size:.66rem">📋 Copy ผลประชุม</button>
+      <button class="btn bghost" id="export-new-btn" style="font-size:.66rem">🔄 ประชุมใหม่</button>
+    </div>
+  </div>
+
+  </div><!-- end padding -->
+</div>
+
+<!-- ████ HOME ████ -->
+<div class="pg" id="pg-home" style="padding:.85rem">
+  <div style="background:linear-gradient(135deg,rgba(0,255,136,.07),rgba(34,221,255,.04));border:1px solid rgba(0,255,136,.15);border-radius:14px;padding:.95rem;margin-bottom:.8rem">
+    <div id="greet-h" style="font-family:'Bebas Neue';font-size:1.7rem;letter-spacing:.05em;color:var(--green)">สวัสดี! 👋</div>
+    <div id="greet-p" style="font-size:.74rem;color:var(--mu);margin-top:.2rem;line-height:1.7">APEX AI COUNCIL · Multi-AI Math Engine</div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-box"><div class="sn" id="sh-done">0</div><div class="sl">เรียนแล้ว</div></div>
+    <div class="stat-box"><div class="sn" id="sh-str">0</div><div class="sl">STREAK</div></div>
+    <div class="stat-box"><div class="sn" id="sh-acc">0%</div><div class="sl">แม่นยำ</div></div>
+  </div>
+
+  <!-- API Status -->
+  <div id="api-banner" class="stat-box" style="margin-bottom:.72rem;text-align:left;padding:.7rem;border-radius:12px;width:100%"></div>
+
+  <!-- Quick to council -->
+  <div class="slbl">▸ เริ่มสภา AI ด่วน</div>
+  <div class="quick-topics" id="quick-topics"></div>
+
+  <!-- Daily -->
+  <div class="slbl">▸ โจทย์ประจำวัน</div>
+  <div style="background:linear-gradient(135deg,rgba(255,204,51,.07),rgba(255,119,51,.04));border:1px solid rgba(255,204,51,.15);border-radius:12px;padding:.88rem;margin-bottom:.6rem">
+    <div style="font-family:'Bebas Neue';font-size:.9rem;letter-spacing:.08em;color:var(--gold);margin-bottom:.48rem">🎯 DAILY CHALLENGE</div>
+    <div id="daily-q" style="font-size:.84rem;line-height:1.85;margin-bottom:.42rem"></div>
+    <div id="daily-ans" style="display:none;font-size:.76rem;color:var(--green);padding:.5rem;background:rgba(0,255,136,.05);border-left:3px solid var(--green);border-radius:6px;line-height:1.75;margin-top:.35rem;white-space:pre-wrap"></div>
+    <div class="brow" style="margin-top:.45rem">
+      <button class="btn bgold" id="daily-reveal">ดูเฉลย</button>
+      <button class="btn bghost" id="daily-new">🔄 โจทย์ใหม่</button>
+      <button class="btn bp" id="daily-council">🏛 ถามสภา</button>
+    </div>
+  </div>
+</div>
+
+<!-- ████ TUTOR ████ -->
+<div class="pg" id="pg-tutor" style="padding:.85rem">
+  <div style="background:linear-gradient(135deg,rgba(255,34,85,.08),rgba(255,119,51,.04));border:1px solid rgba(255,34,85,.18);border-radius:14px;padding:.88rem;margin-bottom:.72rem;display:flex;gap:.65rem;align-items:center">
+    <div style="font-size:2rem">🔥</div>
+    <div>
+      <div style="font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:.05em;color:var(--red)">APEX AI TUTOR</div>
+      <div style="font-size:.64rem;color:var(--mu);line-height:1.55">โหดกว่า MIT · ตอบตรง · เน้น Proof · อัปโหลดโจทย์ได้</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:.35rem;margin-bottom:.52rem;align-items:center;flex-wrap:wrap">
+    <button class="btn bghost" id="tutor-att-btn" style="font-size:.66rem">📎 อัปโหลดรูป</button>
+    <div id="tutor-chips"></div>
+  </div>
+  <input type="file" id="tutor-file-in" multiple accept="image/*,.pdf,.txt" style="display:none">
+  <div class="hscroll" id="tutor-quick" style="margin-bottom:.6rem"></div>
+  <div class="tutor-box">
+    <div class="tutor-msgs" id="tutor-msgs">
+      <div class="cm sys">ถามได้เลย</div>
+      <div class="cm ai">สวัสดี! ฉัน APEX AI ครูคณิต 🔥
+
+ถามได้ทุกเรื่อง — Proof, Concept, ส่งรูปโจทย์มาได้เลย ไม่มีการตามใจ มีแต่ความเข้มงวด</div>
+    </div>
+    <div class="tutor-inp">
+      <button class="att-btn" id="tutor-att2" onclick="$('tutor-file-in').click()">📎</button>
+      <textarea class="tutor-ta" id="tutor-in" placeholder="ถามเรื่องคณิตได้เลย..." rows="1"></textarea>
+      <button class="send-btn" style="background:var(--red)" id="tutor-send">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- ████ IMAGE ████ -->
+<div class="pg" id="pg-image" style="padding:.85rem">
+  <div class="council-hero-badge" style="margin-bottom:.6rem">🎨 AI IMAGE STUDIO</div>
+  <div style="font-family:'Bebas Neue';font-size:1.55rem;letter-spacing:.05em;color:var(--purple);margin-bottom:.2rem">สร้างภาพ AI</div>
+  <div style="font-size:.7rem;color:var(--mu);line-height:1.7;margin-bottom:.75rem">แผนภาพคณิต · SVG · Graph · Infographic · DALL-E 3</div>
+
+  <div class="hscroll" id="img-modes" style="margin-bottom:.6rem"></div>
+
+  <div style="background:var(--p1);border:1px solid var(--b1);border-radius:12px;padding:.72rem;margin-bottom:.52rem">
+    <textarea class="fi" id="img-prompt" rows="3" placeholder="เช่น: แผนภาพ Fourier Transform นีออน · กราฟ y=sin(x) สวยงาม · Unit Circle สี · Mandelbrot Set..." style="resize:none;margin-top:0"></textarea>
+    <div class="hscroll" id="img-quick" style="margin-top:.4rem"></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:.52rem">
+    <div>
+      <div style="font-family:'IBM Plex Mono';font-size:.46rem;color:var(--mu);margin-bottom:.24rem">สไตล์</div>
+      <select class="fsel" id="img-style">
+        <option value="math-diagram">📊 Math Diagram</option>
+        <option value="infographic">📋 Infographic</option>
+        <option value="3d-graph">🌐 3D Graph</option>
+        <option value="sketch">✏️ Sketch</option>
+        <option value="neon">💫 Neon / Dark</option>
+        <option value="minimal">◻ Minimal</option>
+        <option value="colorful">🌈 Colorful</option>
+      </select>
+    </div>
+    <div>
+      <div style="font-family:'IBM Plex Mono';font-size:.46rem;color:var(--mu);margin-bottom:.24rem">ขนาด</div>
+      <select class="fsel" id="img-size">
+        <option value="square">1:1 Square</option>
+        <option value="wide">16:9 Wide</option>
+        <option value="tall">9:16 Tall</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="brow" style="margin-bottom:.65rem">
+    <button class="btn bp" id="img-gen" style="flex:1">🎨 สร้างภาพ</button>
+    <button class="btn bghost" id="img-enhance">✨ ปรับ Prompt</button>
+  </div>
+
+  <div id="img-wrap" style="display:none">
+    <div class="img-result-box" id="img-result">
+      <div class="img-loader" id="img-loader">
+        <div class="iloader-dots"><span></span><span></span><span></span></div>
+        <div style="font-family:'IBM Plex Mono';font-size:.58rem;color:var(--mu)" id="img-status-txt">กำลังสร้าง...</div>
+      </div>
+      <img id="img-out" style="display:none;width:100%;border-radius:12px">
+      <canvas id="img-canvas" style="display:none;max-width:100%"></canvas>
+      <div id="img-svg-wrap" style="display:none;width:100%"></div>
+    </div>
+    <div class="brow" style="margin-top:.42rem">
+      <button class="btn bghost" id="img-save" style="font-size:.66rem">💾 บันทึก</button>
+      <button class="btn bghost" id="img-redo" style="font-size:.66rem">🔄 สร้างใหม่</button>
+      <button class="btn bghost" id="img-to-council" style="font-size:.66rem">🏛 ส่งสภา</button>
+    </div>
+    <div id="img-used" style="display:none;margin-top:.38rem;padding:.48rem;background:rgba(204,136,255,.05);border:1px solid rgba(204,136,255,.14);border-radius:8px;font-size:.66rem;color:var(--mu);line-height:1.65"></div>
+  </div>
+
+  <div id="img-gallery-wrap" style="display:none;margin-top:.75rem">
+    <div class="slbl">▸ ภาพที่สร้างไว้</div>
+    <div id="img-gallery" style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem"></div>
+  </div>
+</div>
+
+<!-- ████ QUIZ ████ -->
+<div class="pg" id="pg-quiz" style="padding:.85rem">
+  <div style="font-family:'Bebas Neue';font-size:1.5rem;letter-spacing:.05em;color:var(--green);margin-bottom:.6rem">🎯 QUIZ ทดสอบ</div>
+  <div class="hscroll" id="quiz-filter" style="margin-bottom:.72rem"></div>
+
+  <!-- Timer -->
+  <div class="quiz-timer-wrap" id="quiz-timer-wrap">
+    <div class="timer-ring">
+      <svg class="timer-svg" width="38" height="38" viewBox="0 0 38 38">
+        <circle class="timer-bg" cx="19" cy="19" r="16"/>
+        <circle class="timer-arc" id="timer-arc" cx="19" cy="19" r="16" stroke-dasharray="100.5" stroke-dashoffset="0"/>
+      </svg>
+      <div class="timer-num" id="timer-num">30</div>
+    </div>
+    <div class="timer-label">
+      <div>⏱ จับเวลา</div>
+      <strong id="timer-score-lbl">0/0</strong>
+    </div>
+    <div style="margin-left:auto;display:flex;gap:.3rem;align-items:center">
+      <button class="btn bghost" id="timer-toggle-btn" style="font-size:.58rem;padding:.28em .65em">เปิด Timer</button>
+      <select class="fsel" id="timer-sec-sel" style="width:auto;font-size:.54rem;padding:.25rem .45rem;margin-top:0">
+        <option value="15">15s</option>
+        <option value="30" selected>30s</option>
+        <option value="60">60s</option>
+        <option value="90">90s</option>
+      </select>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.7rem">
+    <span class="chip cb" id="q-lvl">เลือกระดับ</span>
+    <span style="font-family:'Bebas Neue';font-size:1.2rem;color:var(--gold)"><span id="q-score">0</span>/<span id="q-total">0</span></span>
+  </div>
+  <div class="qbox">
+    <div class="q-text" id="q-text">กดระดับด้านบน 👆</div>
+    <div class="q-opts" id="q-opts"></div>
+    <div class="q-fb" id="q-fb"></div>
+    <div id="q-ai-gen-status" style="font-family:'IBM Plex Mono';font-size:.54rem;color:var(--mu);text-align:center;padding:.35rem;display:none">⏳ AI สร้างข้อสอบ...</div>
+  </div>
+  <div class="brow">
+    <button class="btn bg" id="q-next" style="display:none">ต่อไป →</button>
+    <button class="btn bghost" id="q-explain">🤖 อธิบาย</button>
+    <button class="btn bp" id="q-ai-gen">✨ AI สร้างโจทย์</button>
+    <button class="btn bghost" id="q-to-council">🏛 ถามสภา</button>
+  </div>
+</div>
+
+<!-- ████ ROADMAP ████ -->
+<div class="pg" id="pg-road" style="padding:.85rem">
+  <div style="font-family:'Bebas Neue';font-size:1.5rem;letter-spacing:.05em;color:var(--green);margin-bottom:.2rem">🗺 MASTER ROADMAP</div>
+  <div style="font-size:.7rem;color:var(--mu);margin-bottom:.75rem">กดวงกลมซ้ายเพื่อทำเครื่องหมาย · กด "ถามสภา" เพื่อเรียนรู้</div>
+  <div id="road-list"></div>
+</div>
+
+<!-- ████ COURSES ████ -->
+<div class="pg" id="pg-courses" style="padding:.85rem">
+  <div style="font-family:'Bebas Neue';font-size:1.5rem;letter-spacing:.05em;color:var(--green);margin-bottom:.6rem">📚 วิชาทั้งหมด</div>
+  <div class="hscroll" id="course-filter" style="margin-bottom:.75rem"></div>
+  <div id="course-list"></div>
+</div>
+
+<!-- ████ EDIT ████ -->
+<div class="pg" id="pg-edit" style="padding:.85rem">
+  <div style="font-family:'Bebas Neue';font-size:1.5rem;letter-spacing:.05em;color:var(--green);margin-bottom:.2rem">⚙️ AI แก้แอป</div>
+  <div style="font-size:.7rem;color:var(--mu);margin-bottom:.72rem">พิมพ์คำสั่งให้ AI แก้แอปนี้</div>
+  <div class="hscroll" id="edit-examples" style="margin-bottom:.72rem"></div>
+  <div class="terminal">
+    <div class="term-bar">
+      <span style="display:flex;gap:4px">
+        <span style="background:#ff5f57;width:7px;height:7px;border-radius:50%;display:block"></span>
+        <span style="background:#ffbd2e;width:7px;height:7px;border-radius:50%;display:block"></span>
+        <span style="background:#28c840;width:7px;height:7px;border-radius:50%;display:block"></span>
+      </span>
+      <span>APEX SELF-EDIT TERMINAL v4.0</span>
+    </div>
+    <div class="term-out" id="edit-out">$ ระบบพร้อม · ใส่คำสั่งด้านล่าง
+</div>
+    <textarea class="term-ta" id="edit-in" placeholder="เช่น: เปลี่ยนธีมสีเขียว / เพิ่มวิชา Topology / เพิ่มโหมด Pomodoro Timer..." rows="2"></textarea>
+    <div class="term-brow">
+      <button class="btn bg" id="edit-run" style="font-size:.68rem">▶ Run AI</button>
+      <button class="btn bghost" id="edit-preview" style="font-size:.68rem">👁 Preview</button>
+      <button class="btn bghost" id="edit-apply" style="font-size:.68rem;display:none">✅ Apply</button>
+      <button class="btn bghost" id="edit-revert" style="font-size:.68rem;display:none">↩ Revert</button>
+    </div>
+  </div>
+  <div id="edit-preview-wrap" style="display:none;margin-top:.42rem">
+    <iframe id="edit-iframe" style="width:100%;height:50vh;border:1px solid var(--b1);border-radius:10px;background:#fff"></iframe>
+  </div>
+</div>
+
+<!-- ████ NOTES ████ -->
+<div class="pg" id="pg-notes" style="padding:.85rem">
+  <div style="font-family:'Bebas Neue';font-size:1.5rem;letter-spacing:.05em;color:var(--purple);margin-bottom:.2rem">📝 โน้ตส่วนตัว</div>
+  <div style="font-size:.7rem;color:var(--mu);margin-bottom:.75rem">บันทึก Proof · สูตร · ความคิด · ลิงก์กับบทเรียน</div>
+  <div class="note-inp-area">
+    <div class="note-inp-bar">
+      <span>✏️ เขียนโน้ตใหม่</span>
+    </div>
+    <textarea class="note-ta" id="note-ta" placeholder="เช่น: Proof ε-δ ของ lim sin(x)/x = 1&#10;ใช้ Squeeze Theorem...&#10;&#10;หรือ: สูตร Eigenvalue decomposition A = PDP⁻¹" rows="4"></textarea>
+    <div class="note-footer">
+      <select class="note-tag-sel" id="note-tag-sel">
+        <option value="general">📌 ทั่วไป</option>
+        <option value="proof">🔬 Proof</option>
+        <option value="formula">📐 สูตร</option>
+        <option value="idea">💡 ไอเดีย</option>
+        <option value="quiz">🎯 Quiz</option>
+        <option value="council">🏛 สภา</option>
+      </select>
+      <button class="btn bp" id="note-save-btn" style="margin-left:auto;font-size:.7rem">💾 บันทึก</button>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
+    <div class="hscroll" id="note-filter" style="flex:1;padding-bottom:0"></div>
+    <button class="btn bghost" id="note-export-btn" style="font-size:.6rem;flex-shrink:0;margin-left:.4rem">📤 Export</button>
+  </div>
+  <div id="note-list"></div>
+  <div id="note-empty" style="text-align:center;padding:2rem;font-size:.74rem;color:var(--mu);display:none">ยังไม่มีโน้ต · เริ่มเขียนด้านบนได้เลย</div>
+</div>
+
+<!-- ████ PROGRESS ████ -->
+<div class="pg" id="pg-progress" style="padding:.85rem">
+  <div style="font-family:'Bebas Neue';font-size:1.5rem;letter-spacing:.05em;color:var(--blue);margin-bottom:.2rem">📊 Progress รายสัปดาห์</div>
+  <div style="font-size:.7rem;color:var(--mu);margin-bottom:.75rem">ติดตามความก้าวหน้า · XP รายวัน · สถิติการเรียน</div>
+
+  <!-- Weekly XP Chart -->
+  <div class="chart-wrap">
+    <div class="chart-title">⚡ XP รายวัน (7 วันล่าสุด)</div>
+    <div class="bar-chart" id="xp-chart"></div>
+    <div class="chart-row" id="xp-chart-labels"></div>
+  </div>
+
+  <!-- Quiz Accuracy Chart -->
+  <div class="chart-wrap">
+    <div class="chart-title">🎯 ความแม่นยำ Quiz (7 วัน)</div>
+    <div class="bar-chart" id="acc-chart" style="height:70px"></div>
+    <div class="chart-row" id="acc-chart-labels"></div>
+  </div>
+
+  <!-- Summary Stats -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.45rem;margin-bottom:.7rem">
+    <div class="stat-box" style="text-align:left;padding:.7rem">
+      <div style="font-family:'IBM Plex Mono';font-size:.46rem;color:var(--mu);margin-bottom:.3rem">📈 สัปดาห์นี้</div>
+      <div style="font-family:'Bebas Neue';font-size:1.4rem;color:var(--green)" id="prog-week-xp">0</div>
+      <div style="font-family:'IBM Plex Mono';font-size:.44rem;color:var(--mu)">XP สะสม</div>
+    </div>
+    <div class="stat-box" style="text-align:left;padding:.7rem">
+      <div style="font-family:'IBM Plex Mono';font-size:.46rem;color:var(--mu);margin-bottom:.3rem">🔥 Streak ปัจจุบัน</div>
+      <div style="font-family:'Bebas Neue';font-size:1.4rem;color:var(--red)" id="prog-streak">0</div>
+      <div style="font-family:'IBM Plex Mono';font-size:.44rem;color:var(--mu)">วัน</div>
+    </div>
+    <div class="stat-box" style="text-align:left;padding:.7rem">
+      <div style="font-family:'IBM Plex Mono';font-size:.46rem;color:var(--mu);margin-bottom:.3rem">✅ เรียนแล้ว</div>
+      <div style="font-family:'Bebas Neue';font-size:1.4rem;color:var(--blue)" id="prog-done">0</div>
+      <div style="font-family:'IBM Plex Mono';font-size:.44rem;color:var(--mu)">หัวข้อ</div>
+    </div>
+    <div class="stat-box" style="text-align:left;padding:.7rem">
+      <div style="font-family:'IBM Plex Mono';font-size:.46rem;color:var(--mu);margin-bottom:.3rem">🎯 Quiz แม่นยำ</div>
+      <div style="font-family:'Bebas Neue';font-size:1.4rem;color:var(--gold)" id="prog-acc">0%</div>
+      <div style="font-family:'IBM Plex Mono';font-size:.44rem;color:var(--mu)">ตลอดเวลา</div>
+    </div>
+  </div>
+
+  <!-- Reminder Section -->
+  <div style="font-family:'Bebas Neue';font-size:.88rem;letter-spacing:.15em;color:var(--mu);margin:.8rem 0 .45rem">🔔 REMINDER ตั้งเตือน</div>
+  <div style="background:var(--p1);border:1px solid var(--b1);border-radius:12px;overflow:hidden;margin-bottom:.7rem">
+    <div class="reminder-row" style="border-bottom:1px solid var(--b1)">
+      <div class="reminder-ico">📅</div>
+      <div class="reminder-body">
+        <h4>เตือนเรียนประจำวัน</h4>
+        <p id="reminder-daily-time">ยังไม่ได้ตั้ง</p>
+      </div>
+      <button class="sw" id="sw-daily" data-sw="daily"></button>
+    </div>
+    <div class="reminder-row" style="border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:.55rem;padding:.5rem .75rem">
+      <span style="font-family:'IBM Plex Mono';font-size:.52rem;color:var(--mu)">เวลา:</span>
+      <input type="time" id="reminder-time-inp" value="19:00" style="background:var(--p2);border:1px solid var(--b1);border-radius:6px;padding:.25rem .5rem;color:var(--tx);font-family:'IBM Plex Mono';font-size:.64rem;outline:none">
+      <button class="btn bg" id="reminder-set-btn" style="font-size:.64rem;padding:.3em .75em">ตั้งเวลา</button>
+    </div>
+    <div class="reminder-row">
+      <div class="reminder-ico">🔥</div>
+      <div class="reminder-body">
+        <h4>เตือน Streak ใกล้หาย</h4>
+        <p>แจ้งเตือนถ้าไม่ได้เรียนทั้งวัน</p>
+      </div>
+      <button class="sw" id="sw-streak" data-sw="streak"></button>
+    </div>
+  </div>
+
+  <!-- Export -->
+  <button class="btn bghost" id="export-progress-btn" style="width:100%;justify-content:center;gap:.4rem">
+    📤 Export Progress Report (PDF)
+  </button>
+</div>
+
+<!-- ████ LEADERBOARD ████ -->
+<div class="pg" id="pg-leaderboard" style="padding:.85rem">
+  <div style="font-family:'Bebas Neue';font-size:1.5rem;letter-spacing:.05em;color:var(--gold);margin-bottom:.2rem">🏆 LEADERBOARD</div>
+  <div style="font-size:.7rem;color:var(--mu);margin-bottom:.75rem">จัดอันดับ XP · Streak · ความแม่นยำ · เปรียบเทียบตัวเอง</div>
+  <div class="hscroll" style="margin-bottom:.72rem" id="lb-filter"></div>
+  <div style="background:var(--p1);border:1px solid var(--b1);border-radius:12px;overflow:hidden;margin-bottom:.7rem">
+    <div id="lb-list"></div>
+  </div>
+  <div style="background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.2);border-radius:12px;padding:.75rem;margin-bottom:.65rem">
+    <div style="font-family:'IBM Plex Mono';font-size:.5rem;color:var(--green);margin-bottom:.4rem">👤 คะแนนของคุณ</div>
+    <div style="display:flex;gap:1rem;align-items:center">
+      <div><div style="font-family:'Bebas Neue';font-size:1.6rem;color:var(--gold)" id="lb-my-rank">#1</div><div style="font-family:'IBM Plex Mono';font-size:.44rem;color:var(--mu)">อันดับ</div></div>
+      <div><div style="font-family:'Bebas Neue';font-size:1.6rem;color:var(--green)" id="lb-my-xp">0</div><div style="font-family:'IBM Plex Mono';font-size:.44rem;color:var(--mu)">XP</div></div>
+      <div><div style="font-family:'Bebas Neue';font-size:1.6rem;color:var(--red)" id="lb-my-streak">0🔥</div><div style="font-family:'IBM Plex Mono';font-size:.44rem;color:var(--mu)">Streak</div></div>
+    </div>
+  </div>
+  <div style="font-family:'IBM Plex Mono';font-size:.52rem;color:var(--mu);text-align:center;line-height:1.8">Leaderboard จำลองจาก Community APEX<br><span style="color:rgba(255,255,255,.15)">ข้อมูลสุ่มจากระบบ · คะแนนจริงคือคะแนนของคุณ</span></div>
+</div>
+
+<!-- ████ SETTINGS ████ -->
+<div class="pg" id="pg-settings" style="padding:.85rem">
+  <div style="font-family:'Bebas Neue';font-size:1.5rem;letter-spacing:.05em;color:var(--green);margin-bottom:.7rem">⚙️ ตั้งค่า</div>
+
+  <!-- Profile -->
+  <div class="set-card">
+    <div class="set-hd">👤 โปรไฟล์</div>
+    <div class="set-row">
+      <div class="set-ico">✏️</div>
+      <div class="set-body" style="flex:1">
+        <h4>ชื่อ</h4>
+        <input class="fi" id="set-name" placeholder="ชื่อของคุณ..." style="margin-top:.28rem">
+      </div>
+    </div>
+    <div class="set-row">
+      <div class="set-ico">🎯</div>
+      <div class="set-body" style="flex:1">
+        <h4>เป้าหมาย</h4>
+        <select class="fsel" id="set-goal" style="margin-top:.28rem">
+          <option value="mit">เข้า MIT / มหาวิทยาลัยระดับโลก</option>
+          <option value="olympiad">แข่ง IMO / Math Olympiad</option>
+          <option value="exam">สอบเข้ามหาวิทยาลัย</option>
+          <option value="startup">สร้าง Startup / AI</option>
+          <option value="research">วิจัย / PhD</option>
+        </select>
+      </div>
+    </div>
+    <div class="set-row">
+      <div class="set-ico">💾</div>
+      <div class="set-body"><button class="btn bg" onclick="saveProfile()">บันทึก</button></div>
+    </div>
+  </div>
+
+  <!-- MULTI API -->
+  <div class="set-card">
+    <div class="set-hd">🔑 API KEYS — ใส่ได้หลายตัว · ทำงานร่วมกัน</div>
+    <div style="padding:.62rem .8rem;border-bottom:1px solid var(--b1);background:rgba(0,255,136,.02)">
+      <div style="font-size:.68rem;color:var(--mu);line-height:1.78">
+        ⭐ <strong style="color:var(--green)">Claude AI</strong> ใช้ฟรีใน claude.ai — ไม่ต้อง Key<br>
+        ใส่ Key หลายตัวได้ · สภา AI เลือก AI ที่มี Key ให้อัตโนมัติ<br>
+        <span style="color:var(--blue)">ยิ่งมี Key เยอะ → AI ในสภายิ่งหลากหลาย → คำตอบดีขึ้น</span>
+      </div>
+    </div>
+
+    <!-- Built-in Claude -->
+    <div class="aprov" style="border-color:rgba(0,255,136,.2)">
+      <div class="aprov-head">
+        <div class="aprov-ico">⭐</div>
+        <div class="aprov-name" style="color:var(--green)">Claude AI (Built-in)</div>
+        <div class="aprov-badge" style="background:rgba(0,255,136,.1);color:var(--green);border-color:rgba(0,255,136,.2)">✅ FREE</div>
+      </div>
+      <div class="aprov-model">claude-sonnet-4-6 · ฟรีใน claude.ai · ไม่ต้อง Key</div>
+    </div>
+
+    <!-- OpenAI -->
+    <div class="aprov">
+      <div class="aprov-head">
+        <div class="aprov-ico">🤖</div>
+        <div class="aprov-name">OpenAI / ChatGPT</div>
+        <div class="aprov-badge cp">gpt-4o + DALL-E 3</div>
+      </div>
+      <div class="aprov-model">platform.openai.com · สร้างภาพ DALL-E 3 ได้</div>
+      <div class="aprov-inp">
+        <input class="fi" type="password" id="k-openai" placeholder="sk-...">
+        <button class="btn bghost" style="font-size:.58rem;padding:.3em .62em;flex-shrink:0" onclick="testKey('openai')">Test</button>
+      </div>
+      <div id="st-openai" class="aprov-status stag"></div>
+    </div>
+
+    <!-- Gemini -->
+    <div class="aprov">
+      <div class="aprov-head">
+        <div class="aprov-ico">💎</div>
+        <div class="aprov-name">Google Gemini</div>
+        <div class="aprov-badge cy">gemini-2.0-flash</div>
+      </div>
+      <div class="aprov-model">aistudio.google.com · ฟรี · Vision รองรับรูปภาพ</div>
+      <div class="aprov-inp">
+        <input class="fi" type="password" id="k-gemini" placeholder="AIza...">
+        <button class="btn bghost" style="font-size:.58rem;padding:.3em .62em;flex-shrink:0" onclick="testKey('gemini')">Test</button>
+      </div>
+      <div id="st-gemini" class="aprov-status stag"></div>
+    </div>
+
+    <!-- Groq -->
+    <div class="aprov">
+      <div class="aprov-head">
+        <div class="aprov-ico">⚡</div>
+        <div class="aprov-name">Groq</div>
+        <div class="aprov-badge cg">เร็วมาก · ฟรี</div>
+      </div>
+      <div class="aprov-model">console.groq.com · llama3-70b · mixtral</div>
+      <div class="aprov-inp">
+        <input class="fi" type="password" id="k-groq" placeholder="gsk_...">
+        <button class="btn bghost" style="font-size:.58rem;padding:.3em .62em;flex-shrink:0" onclick="testKey('groq')">Test</button>
+      </div>
+      <div id="st-groq" class="aprov-status stag"></div>
+    </div>
+
+    <!-- Claude Key -->
+    <div class="aprov">
+      <div class="aprov-head">
+        <div class="aprov-ico">🧠</div>
+        <div class="aprov-name">Anthropic Claude (Key)</div>
+        <div class="aprov-badge cp">claude-opus</div>
+      </div>
+      <div class="aprov-model">console.anthropic.com · claude-opus-4 · sonnet · haiku</div>
+      <div class="aprov-inp">
+        <input class="fi" type="password" id="k-claude" placeholder="sk-ant-...">
+        <button class="btn bghost" style="font-size:.58rem;padding:.3em .62em;flex-shrink:0" onclick="testKey('claude')">Test</button>
+      </div>
+      <div id="st-claude" class="aprov-status stag"></div>
+    </div>
+
+    <!-- Mistral -->
+    <div class="aprov">
+      <div class="aprov-head">
+        <div class="aprov-ico">🌊</div>
+        <div class="aprov-name">Mistral AI</div>
+        <div class="aprov-badge cb">mistral-large</div>
+      </div>
+      <div class="aprov-model">console.mistral.ai</div>
+      <div class="aprov-inp">
+        <input class="fi" type="password" id="k-mistral" placeholder="...">
+        <button class="btn bghost" style="font-size:.58rem;padding:.3em .62em;flex-shrink:0" onclick="testKey('mistral')">Test</button>
+      </div>
+      <div id="st-mistral" class="aprov-status stag"></div>
+    </div>
+
+    <!-- OpenRouter -->
+    <div class="aprov" style="margin-bottom:.65rem">
+      <div class="aprov-head">
+        <div class="aprov-ico">🔀</div>
+        <div class="aprov-name">OpenRouter</div>
+        <div class="aprov-badge co">100+ โมเดล</div>
+      </div>
+      <div class="aprov-model">openrouter.ai · GPT · Claude · Llama · Gemini</div>
+      <div class="aprov-inp">
+        <input class="fi" type="password" id="k-openrouter" placeholder="sk-or-...">
+        <button class="btn bghost" style="font-size:.58rem;padding:.3em .62em;flex-shrink:0" onclick="testKey('openrouter')">Test</button>
+      </div>
+      <div id="st-openrouter" class="aprov-status stag"></div>
+    </div>
+
+    <div style="padding:.52rem .8rem;border-top:1px solid var(--b1)">
+      <button class="btn bg" onclick="saveAllKeys()" style="width:100%">💾 บันทึก Keys ทั้งหมด</button>
+    </div>
+  </div>
+
+  <!-- Reset -->
+  <div class="set-card">
+    <div class="set-hd">📊 ข้อมูล</div>
+    <div class="set-row">
+      <div class="set-ico">🗑️</div>
+      <div class="set-body" style="flex:1"><h4>รีเซ็ตข้อมูล</h4><p>ล้าง progress ทั้งหมด</p></div>
+      <button class="btn br" style="font-size:.68rem" id="reset-btn">รีเซ็ต</button>
+    </div>
+  </div>
+
+  <div style="text-align:center;font-family:'IBM Plex Mono';font-size:.5rem;color:var(--mu2);padding:1rem 0 .5rem">
+    APEX AI COUNCIL v5.0 · สภา AI สำหรับคณิตระดับโลก<br>ข้อมูลเก็บในเครื่องคุณเท่านั้น
+  </div>
+</div>
+
+</div><!-- end scroll -->
+
+<!-- BOTTOM NAV -->
+<div id="bnav">
+  <button class="nb" data-pg="home"><span class="ni">🏠</span>หน้าแรก</button>
+  <button class="nb on" data-pg="council"><span class="ni">🏛</span>สภา AI</button>
+  <button class="nb" data-pg="tutor"><span class="ni">🔥</span>AI ครู</button>
+  <button class="nb" data-pg="image"><span class="ni">🎨</span>ภาพ AI</button>
+  <button class="nb" data-pg="quiz"><span class="ni">🎯</span>Quiz</button>
+  <button class="nb" data-pg="road"><span class="ni">🗺</span>Roadmap</button>
+  <button class="nb" data-pg="courses"><span class="ni">📚</span>วิชา</button>
+  <button class="nb" data-pg="notes"><span class="ni">📝</span>โน้ต</button>
+  <button class="nb" data-pg="progress"><span class="ni">📊</span>Progress</button>
+  <button class="nb" data-pg="leaderboard"><span class="ni">🏆</span>Ranking</button>
+  <button class="nb" data-pg="edit"><span class="ni">⚙️</span>แก้แอป</button>
+  <button class="nb" data-pg="settings"><span class="ni">☰</span>ตั้งค่า</button>
+</div>
+
+<script>
+// ══════════════════════════════
+// UTILS
+// ══════════════════════════════
+const $=id=>document.getElementById(id);
+const qs=s=>document.querySelector(s);
+const qsa=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const ls={get:(k,d=null)=>{try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch{return d}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
+const ar=el=>{el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px'};
+function toast(msg,type='ok'){
+  const c={ok:['var(--green)','#05050c'],err:['var(--red)','#fff'],gold:['var(--gold)','#05050c'],purple:['var(--purple)','#05050c']};
+  const [bg,fg]=c[type]||c.ok;
+  const t=document.createElement('div');
+  t.textContent=msg;
+  t.style.cssText=`position:fixed;top:66px;left:50%;transform:translateX(-50%);background:${bg};color:${fg};padding:.44em 1.1em;border-radius:20px;font-family:'IBM Plex Mono';font-size:.64rem;z-index:9998;animation:fadeUp .3s ease;white-space:nowrap;box-shadow:0 4px 24px rgba(0,0,0,.6);pointer-events:none`;
+  document.body.appendChild(t);setTimeout(()=>t.remove(),2800);
+}
+
+// ══════════════════════════════
+// STATE
+// ══════════════════════════════
+let ST=ls.get('apex5',{name:'',goal:'mit',xp:0,streak:0,lastActive:'',done:[],cdone:[],qc:0,qt:0,sessions:0});
+let KY=ls.get('apex5_keys',{openai:'',gemini:'',groq:'',claude:'',mistral:'',openrouter:''});
+const saveS=()=>ls.set('apex5',ST);
+const saveK=()=>ls.set('apex5_keys',KY);
+
+function addXP(n){ST.xp+=n;saveS();renderHdr();if(typeof recordDailyXP==='function'){recordDailyXP(n);recordDailyAcc();}}
+function renderHdr(){
+  const lv=Math.floor(ST.xp/100);
+  $('xp-lbl').textContent=`Lv${lv}·${ST.xp}XP`;
+  $('stk-lbl').textContent=`🔥${ST.streak}`;
+  $('sh-done')&&($('sh-done').textContent=ST.done.length);
+  $('sh-str')&&($('sh-str').textContent=ST.streak);
+  const acc=ST.qt>0?Math.round(ST.qc/ST.qt*100):0;
+  $('sh-acc')&&($('sh-acc').textContent=acc+'%');
+  $('cs-sessions')&&($('cs-sessions').textContent=ST.sessions);
+  $('cs-agents')&&($('cs-agents').textContent=activeAgents.size);
+  $('cs-xp')&&($('cs-xp').textContent=ST.xp);
+  updateKeyDots();
+}
+function updateKeyDots(){
+  const map={c:'claudeai',o:'openai',g:'gemini',q:'groq',m:'mistral'};
+  const avail=getProviders();
+  Object.entries(map).forEach(([k,p])=>{
+    const el=$(`kd-${k}`);
+    if(!el) return;
+    const on=p==='claudeai'||avail.includes(p);
+    el.className='kd'+(on?' on':'');
+  });
+}
+
+// ══════════════════════════════
+// MULTI-API ENGINE
+// ══════════════════════════════
+function getProviders(){
+  return ['claudeai','claude','openai','gemini','groq','mistral','openrouter'].filter(p=>p==='claudeai'||!!KY[p]);
+}
+function pickProvider(prefer){
+  const avail=getProviders();
+  if(prefer&&avail.includes(prefer)) return prefer;
+  return avail[0]||'claudeai';
+}
+
+async function ai(prompt,sys='',opts={}){
+  const prov=opts.prov||getProviders()[0]||'claudeai';
+  const imgs=opts.imgs||[];
+  const maxTok=opts.maxTok||2000;
+  const lang=opts.lang||'th';
+  const langNote=lang==='th'?'\n\n[ตอบเป็นภาษาไทย]':lang==='en'?'\n\n[Respond in English]':'\n\n[ตอบภาษาไทยเป็นหลัก / Answer in Thai primarily]';
+  const fullPrompt=prompt+langNote;
+
+  try{
+    // ── Claude AI (built-in) ──
+    if(prov==='claudeai'){
+      let content=imgs.length?buildClaudeContent(imgs,fullPrompt):fullPrompt;
+      const messages=sys?[{role:'user',content:'[SYSTEM]\n'+sys+'\n\n[USER]\n'+fullPrompt}]:[{role:'user',content}];
+      if(imgs.length&&!sys) messages[0].content=content;
+      const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+        headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:maxTok,messages})});
+      if(!r.ok) throw new Error(`Claude API ${r.status}`);
+      const d=await r.json();
+      return d.content?.[0]?.text||'(ไม่มีคำตอบ)';
+    }
+    // ── Gemini ──
+    if(prov==='gemini'){
+      const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${KY.gemini}`;
+      const parts=[];
+      if(sys) parts.push({text:'SYSTEM: '+sys+'\n\n'});
+      imgs.forEach(img=>{
+        const mt=img.includes('/png')?'image/png':img.includes('/gif')?'image/gif':'image/jpeg';
+        parts.push({inline_data:{mime_type:mt,data:img.split(',')[1]}});
+      });
+      parts.push({text:fullPrompt});
+      const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts}]})});
+      if(!r.ok) throw new Error(`Gemini ${r.status}`);
+      const d=await r.json();
+      return d.candidates?.[0]?.content?.parts?.[0]?.text||'(ไม่มีคำตอบ)';
+    }
+    // ── Anthropic Claude (key) ──
+    if(prov==='claude'){
+      const content=imgs.length?buildClaudeContent(imgs,fullPrompt):fullPrompt;
+      const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':KY.claude,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({model:'claude-opus-4-5',max_tokens:maxTok,...(sys?{system:sys}:{}),messages:[{role:'user',content}]})});
+      if(!r.ok) throw new Error(`Claude Key ${r.status}`);
+      const d=await r.json();
+      return d.content?.[0]?.text||'(ไม่มีคำตอบ)';
+    }
+    // ── OpenAI-compatible (openai / groq / mistral / openrouter) ──
+    const EP={openai:'https://api.openai.com/v1/chat/completions',groq:'https://api.groq.com/openai/v1/chat/completions',mistral:'https://api.mistral.ai/v1/chat/completions',openrouter:'https://openrouter.ai/api/v1/chat/completions'};
+    const MD={openai:'gpt-4o-mini',groq:'llama3-70b-8192',mistral:'mistral-large-latest',openrouter:'openai/gpt-4o-mini'};
+    const msgs=[];
+    if(sys) msgs.push({role:'system',content:sys});
+    const userContent=imgs.length?[...imgs.map(img=>({type:'image_url',image_url:{url:img}})),{type:'text',text:fullPrompt}]:fullPrompt;
+    msgs.push({role:'user',content:userContent});
+    const hdrs={'Content-Type':'application/json','Authorization':'Bearer '+KY[prov]};
+    if(prov==='openrouter') hdrs['HTTP-Referer']='https://apex-council.app';
+    const r=await fetch(EP[prov],{method:'POST',headers:hdrs,body:JSON.stringify({model:opts.model||MD[prov],messages:msgs,max_tokens:maxTok})});
+    if(!r.ok){const e=await r.text().catch(()=>'');throw new Error(`${prov} ${r.status}: ${e.slice(0,60)}`);}
+    const d=await r.json();
+    return d.choices?.[0]?.message?.content||'(ไม่มีคำตอบ)';
+  }catch(err){
+    console.error(prov,err);
+    // fallback
+    const avail=getProviders();
+    const idx=avail.indexOf(prov);
+    if(idx>=0&&idx<avail.length-1){
+      return ai(prompt,sys,{...opts,prov:avail[idx+1]});
+    }
+    return `❌ (${prov}): ${err.message}`;
+  }
+}
+
+function buildClaudeContent(imgs,text){
+  const c=[];
+  imgs.forEach(img=>{
+    const mt=img.includes('/png')?'image/png':img.includes('/gif')?'image/gif':'image/jpeg';
+    c.push({type:'image',source:{type:'base64',media_type:mt,data:img.split(',')[1]}});
+  });
+  c.push({type:'text',text});
+  return c;
+}
+
+async function testKey(prov){
+  const inp=$(`k-${prov}`),st=$(`st-${prov}`);
+  if(!inp||!st) return;
+  const k=inp.value.trim();
+  if(!k){toast('ใส่ Key ก่อน','err');return;}
+  KY[prov]=k;
+  st.style.display='inline-block';st.className='aprov-status stag sload';st.textContent='⏳ ทดสอบ...';
+  const r=await ai('ตอบ OK สั้นๆ','',{prov,maxTok:20});
+  if(r&&!r.startsWith('❌')){
+    st.className='aprov-status stag sok';st.textContent='✅ ใช้งานได้';
+    toast(prov+' ✅');updateKeyDots();
+  }else{st.className='aprov-status stag serr';st.textContent='❌ ผิดพลาด';toast(r.slice(0,50),'err');}
+}
+
+function saveAllKeys(){
+  ['openai','gemini','groq','claude','mistral','openrouter'].forEach(p=>{const e=$(`k-${p}`);if(e)KY[p]=e.value.trim();});
+  saveK();updateKeyDots();toast('บันทึก Keys แล้ว ✅');
+}
+function saveProfile(){
+  ST.name=$('set-name').value.trim();ST.goal=$('set-goal').value;saveS();renderHome();toast('บันทึกแล้ว');
+}
+function loadSettings(){
+  if(ST.name)$('set-name').value=ST.name;
+  if(ST.goal)$('set-goal').value=ST.goal;
+  ['openai','gemini','groq','claude','mistral','openrouter'].forEach(p=>{const e=$(`k-${p}`);if(e&&KY[p])e.value=KY[p];});
+}
+
+// ══════════════════════════════
+// DATA
+// ══════════════════════════════
+const MODES=[
+  {id:'debate',icon:'⚔️',name:'DEBATE',desc:'โต้เถียงกันหลายรอบ · ผู้พิพากษาตัดสิน',mc:'rgba(204,136,255,.15)',mcb:'#cc88ff',mcc:'var(--purple)',badge:'HOT'},
+  {id:'parallel',icon:'🗣',name:'PARALLEL',desc:'ทุก AI ตอบพร้อมกัน · เปรียบเทียบคำตอบ',mc:'rgba(34,221,255,.1)',mcb:'#22ddff',mcc:'var(--blue)',badge:'เร็ว'},
+  {id:'chain',icon:'🔗',name:'CHAIN',desc:'ส่งต่อเป็นลูกโซ่ · ต่อยอดความคิด',mc:'rgba(0,255,136,.1)',mcb:'#00ff88',mcc:'var(--green)',badge:'ลึก'},
+  {id:'critique',icon:'🏆',name:'CRITIQUE',desc:'ให้คะแนนกันและกัน · วิจารณ์กัน',mc:'rgba(255,204,51,.1)',mcb:'#ffcc33',mcc:'var(--gold)',badge:'เดือด'},
+  {id:'socratic',icon:'🧩',name:'SOCRATIC',desc:'ถามย้อนกลับ · นำไปสู่ความเข้าใจลึก',mc:'rgba(0,221,170,.1)',mcb:'#00ddaa',mcc:'var(--teal)',badge:'ปัญญา'},
+  {id:'roleplay',icon:'🎭',name:'ROLEPLAY',desc:'AI รับบทบาทหลากหลาย · มองหลายมุม',mc:'rgba(255,85,204,.1)',mcb:'#ff55cc',mcc:'var(--pink)',badge:'สร้างสรรค์'},
+];
+
+const AGENTS=[
+  {id:'prof',ico:'🎓',name:'ศ.อิมพอสซิเบิล',role:'MIT Full Professor',color:'var(--red)',preferProv:'claudeai',
+   sys:`คุณคือศาสตราจารย์คณิตศาสตร์ MIT ที่เข้มงวดที่สุด เน้น mathematical rigor, proof, epsilon-delta ไม่ยอมรับคำตอบที่ไม่เข้มงวด วิจารณ์ตรงๆ`},
+  {id:'devil',ico:'😈',name:'Devil\'s Advocate',role:'นักโต้เถียงมืออาชีพ',color:'var(--orange)',preferProv:'openai',
+   sys:`คุณโต้เถียงทุกข้อสรุป หาสถานการณ์ที่คำตอบผิด มองมุมตรงข้ามเสมอ ท้าทายทุกอย่างด้วยตัวอย่างโต้แย้ง`},
+  {id:'tutor',ico:'💡',name:'ครูนักอธิบาย',role:'Master Explainer',color:'var(--green)',preferProv:'gemini',
+   sys:`คุณอธิบายเก่งที่สุด ใช้ analogy, diagram text-art, ตัวอย่างจากชีวิตจริง ทำให้ยากเป็นง่าย`},
+  {id:'judge',ico:'⚖️',name:'ผู้พิพากษา',role:'Chief Justice AI',color:'var(--purple)',preferProv:'claudeai',
+   sys:`คุณเป็นผู้พิพากษา ฟังทุกฝ่าย แล้วสรุปว่าใครถูก ให้คะแนน ระบุจุดเห็นด้วยและไม่เห็นด้วย`},
+  {id:'creative',ico:'🎨',name:'นักคิดสร้างสรรค์',role:'Creative Mathematician',color:'var(--pink)',preferProv:'openai',
+   sys:`คุณมองคณิตในมุมแปลกใหม่ เชื่อมกับศิลปะ ดนตรี ธรรมชาติ หาความสวยงามในสมการ`},
+  {id:'coder',ico:'💻',name:'AI Engineer',role:'CS/ML Specialist',color:'var(--blue)',preferProv:'groq',
+   sys:`คุณมองคณิตผ่าน computation, algorithm, ML ใช้ pseudo-code อธิบาย แสดง complexity, efficiency`},
+];
+
+const PREF={prof:'claudeai',devil:'openai',tutor:'gemini',judge:'claudeai',creative:'openai',coder:'groq'};
+
+const QUICK_TOPICS=[
+  {ico:'⚔️',txt:'พิสูจน์ √2 เป็นอตรรกยะ',mode:'debate'},
+  {ico:'🌀',txt:'อธิบาย Fourier Transform',mode:'parallel'},
+  {ico:'∞',txt:'ทำไม 0.999... = 1?',mode:'debate'},
+  {ico:'🧩',txt:'Riemann Hypothesis คืออะไร?',mode:'socratic'},
+  {ico:'🔗',txt:'Gradient Descent ทำงานยังไง?',mode:'chain'},
+  {ico:'🎭',txt:'อธิบาย P vs NP หลายมุม',mode:'roleplay'},
+];
+
+const TOPIC_QUICK=['พิสูจน์จำนวนเฉพาะมีอนันต์','อธิบาย Euler Formula e^iπ+1=0','Group Theory คืออะไร?','SVD ใช้ที่ไหน?','อธิบาย Stokes Theorem','ทำไม i² = -1?','Fibonacci กับ Golden Ratio','Gödel Incompleteness Theorem'];
+
+const DAILYS=[
+  {q:'พิสูจน์ว่า √2 เป็นจำนวนอตรรกยะ',a:'สมมติ √2 = p/q (p,q ไม่มีตัวร่วม)\n2 = p²/q² → p² = 2q² → p เป็นคู่ สมมติ p=2k\nแล้ว 4k² = 2q² → q² = 2k² → q เป็นคู่ด้วย\nขัดแย้ง! ∴ √2 ∉ ℚ ∎'},
+  {q:'∫₀^1 x² dx = ?',a:'= [x³/3]₀^1 = 1/3\nใช้ Power Rule: ∫xⁿdx = xⁿ⁺¹/(n+1) + C'},
+  {q:'det([[a,b],[c,d]]) คืออะไร และความหมายเรขาคณิต?',a:'det = ad - bc\nความหมาย: พื้นที่ parallelogram ที่ span โดย column vectors\nถ้า det=0 → matrix singular → ไม่มี inverse'},
+  {q:"นิยาม limit lim(x→a)f(x)=L ด้วย ε-δ",a:"∀ε>0, ∃δ>0: 0<|x-a|<δ ⟹ |f(x)-L|<ε\nความหมาย: ทุกย่านรอบ L กว้าง ε มีย่านรอบ a กว้าง δ ที่ map เข้าไป"},
+  {q:'Euler Formula: e^(iθ) = ?',a:'e^(iθ) = cos θ + i sin θ\nพิสูจน์ด้วย Taylor Series:\ne^x = 1+x+x²/2!+... , cos x = 1-x²/2!+... , sin x = x-x³/3!+...'},
+];
+
+const ROADMAP=[
+  {id:'r1',tier:'ts',n:'01',ico:'🔢',title:'เลขคณิต & พีชคณิตพื้นฐาน',desc:'ระบบตัวเลข สมการ อสมการ กราฟ',tags:['ม.1-3','SG O-Level'],y:'ม.1–3'},
+  {id:'r2',tier:'ts',n:'02',ico:'📐',title:'เรขาคณิต & ตรีโกณมิติ',desc:'สามเหลี่ยม วงกลม sin cos tan',tags:['ม.3-4','IB SL'],y:'ม.3–4'},
+  {id:'r3',tier:'ts',n:'03',ico:'📈',title:'Functions & Pre-Calculus',desc:'Polynomial Exponential Log Sequences',tags:['AP Pre-Calc'],y:'ม.4–5'},
+  {id:'r4',tier:'ts',n:'04',ico:'∫',title:'AP Calculus BC',desc:'Limits Derivatives Integration Taylor Series',tags:['AP BC','IB AA HL'],y:'ม.5–6'},
+  {id:'r5',tier:'ts',n:'05',ico:'🇫🇷',title:'Classes Préparatoires MPSI',desc:'Analysis + Algebra ระดับ Grande École',tags:['MPSI','Prépa'],y:'ม.6/Gap'},
+  {id:'r6',tier:'tu',n:'06',ico:'🎓',title:'MIT 18.01 Single Variable',desc:'Limits Integration Taylor Series',tags:['MIT OCW'],y:'Uni ปี 1'},
+  {id:'r7',tier:'tu',n:'07',ico:'🌐',title:'MIT 18.02 Multivariable',desc:'Partial Deriv Multiple Integrals Stokes',tags:['MIT OCW'],y:'Uni ปี 1'},
+  {id:'r8',tier:'tu',n:'08',ico:'🔲',title:'MIT 18.06 Linear Algebra',desc:'Vector Spaces Eigenvalues SVD · Gilbert Strang',tags:['MIT OCW'],y:'Uni ปี 1-2'},
+  {id:'r9',tier:'tu',n:'09',ico:'〰️',title:'MIT 18.03 Differential Equations',desc:'ODE Laplace Fourier Systems',tags:['MIT OCW'],y:'Uni ปี 2'},
+  {id:'r10',tier:'tu',n:'10',ico:'ℝ',title:'MIT 18.100 Real Analysis',desc:'ε-δ Metric Spaces Compactness · Rudin',tags:['MIT OCW'],y:'Uni ปี 2-3'},
+  {id:'r11',tier:'tu',n:'11',ico:'∀',title:'Abstract Algebra',desc:'Groups Rings Fields Galois Theory',tags:['MIT 18.702'],y:'Uni ปี 3'},
+  {id:'r12',tier:'tu',n:'12',ico:'ℂ',title:'Complex Analysis',desc:'Holomorphic Cauchy Residues Conformal Maps',tags:['MIT 18.112'],y:'Uni ปี 3'},
+  {id:'r13',tier:'tg',n:'13',ico:'💀',title:'PDE + Functional Analysis',desc:'Sobolev Spaces Spectral Theory',tags:['MIT 18.155'],y:'Graduate'},
+  {id:'r14',tier:'tg',n:'14',ico:'🔗',title:'Algebraic Topology',desc:'Homotopy Homology Cohomology',tags:['MIT 18.905'],y:'Graduate'},
+  {id:'r15',tier:'tg',n:'15',ico:'♾️',title:'Research Territory',desc:'Langlands Program · Geometric Analysis',tags:['Fields Medal'],y:'∞'},
+];
+
+const COURSES=[
+  {id:'c1',cat:'มัธยม',code:'SG',name:'Singapore O-Level Math',src:'Singapore MOE',desc:'พื้นฐานแน่น PISA #1',topics:[{t:'Algebra',c:'cg'},{t:'Trig',c:'cg'},{t:'Stats',c:'cy'}],diff:2},
+  {id:'c2',cat:'มัธยม',code:'IB-HL',name:'IB Math AA HL',src:'IB Org',desc:'มัธยมโหดที่สุดในโลก',topics:[{t:'Proof',c:'cr'},{t:'Complex',c:'cr'},{t:'Calc',c:'cr'}],diff:7},
+  {id:'c3',cat:'มัธยม',code:'UK-FM',name:'A-Level Further Math',src:'Edexcel',desc:'เส้นทาง Oxford/Cambridge',topics:[{t:'Further Pure',c:'cr'},{t:'Matrices',c:'cg'},{t:'DEs',c:'cr'}],diff:8},
+  {id:'c4',cat:'มัธยม',code:'FR-MP',name:'Prépa MPSI',src:'Henri IV',desc:'โหดที่สุดระดับมัธยม',topics:[{t:'Analyse',c:'cr'},{t:'Algèbre',c:'cr'},{t:'Topologie',c:'cp'}],diff:9},
+  {id:'c5',cat:'MIT',code:'18.01',name:'Single Variable Calculus',src:'MIT OCW',desc:'Limits Integration Taylor',topics:[{t:'Limits',c:'cg'},{t:'Integrals',c:'cb'},{t:'Taylor',c:'cr'}],diff:4},
+  {id:'c6',cat:'MIT',code:'18.06',name:'Linear Algebra',src:'MIT·Strang',desc:'Gilbert Strang สอนเอง',topics:[{t:'Eigenvalues',c:'cr'},{t:'SVD',c:'cp'},{t:'Ortho',c:'cb'}],diff:6},
+  {id:'c7',cat:'MIT',code:'18.100',name:'Real Analysis',src:'MIT·Rudin',desc:'ε-δ Metric Spaces',topics:[{t:'Metric',c:'cr'},{t:'Compact',c:'cr'},{t:'Measure',c:'cp'}],diff:8},
+  {id:'c8',cat:'สุดโหด',code:'PUTNAM',name:'Putnam Competition',src:'MAA USA',desc:'คะแนนเฉลี่ย 1-2/120',topics:[{t:'Combo',c:'cr'},{t:'Number',c:'cr'},{t:'Analysis',c:'cr'}],diff:10},
+  {id:'c9',cat:'สุดโหด',code:'IMO',name:"Int'l Math Olympiad",src:'IMO',desc:'top 0.001% ของโลก',topics:[{t:'Inequal',c:'cr'},{t:'Combo',c:'cr'},{t:'Geo',c:'cr'}],diff:10},
+];
+
+const QUIZ_BANK={
+  'ม.ต้น':[
+    {q:'2x + 5 = 13 → x = ?',opts:['3','4','5','6'],ans:1,exp:'2x=8, x=4'},
+    {q:'พื้นที่สามเหลี่ยม ฐาน 8 สูง 6 = ?',opts:['24','48','14','28'],ans:0,exp:'½×8×6=24'},
+    {q:'sin 30° = ?',opts:['√3/2','1/2','1/√2','√3'],ans:1,exp:'sin30°=1/2'},
+    {q:'f(x)=x²-4x+3, f(5)=?',opts:['6','8','3','10'],ans:0,exp:'25-20+3=8... wait: 25-20+3=8'},
+  ],
+  'Calculus':[
+    {q:"d/dx(x⁴-3x²) = ?",opts:['4x³-6x','4x³-3x','x³-6x','4x-6'],ans:0,exp:'Power Rule: 4x³-6x'},
+    {q:"∫3x² dx = ?",opts:['x³+C','6x+C','9x²+C','3x+C'],ans:0,exp:'x³+C'},
+    {q:"lim(x→0) sin(x)/x = ?",opts:['0','1','∞','ไม่มีค่า'],ans:1,exp:'=1 โดย Squeeze Theorem'},
+    {q:"(e^x)' = ?",opts:['xe^(x-1)','e^x','e^(x-1)','e^x·x'],ans:1,exp:'e^x อนุพันธ์คือตัวเอง'},
+  ],
+  'Linear Algebra':[
+    {q:'det([[2,1],[4,3]]) = ?',opts:['2','10','6','-2'],ans:0,exp:'(2)(3)-(1)(4)=2'},
+    {q:'Av=λv → v เรียกว่า?',opts:['Eigenvalue','Eigenvector','Basis','Nullspace'],ans:1,exp:'Eigenvector ของ A'},
+    {q:'rank(A)+nullity(A)=?',opts:['det(A)','n (cols)','m (rows)','trace(A)'],ans:1,exp:'Rank-Nullity Theorem'},
+  ],
+  'MIT HL':[
+    {q:'Bolzano-Weierstrass: ทุก bounded sequence มี?',opts:['convergent subsequence','limit','upper bound','divergent tail'],ans:0,exp:'convergent subsequence ใน ℝⁿ'},
+    {q:'Cauchy-Schwarz: |⟨u,v⟩| ≤ ?',opts:['||u||+||v||','||u||·||v||','||u-v||','||u||²'],ans:1,exp:'||u||·||v||'},
+    {q:'ถ้า f: ℝ→ℝ continuous บน compact set → f?',opts:['uniformly continuous','constant','differentiable','bounded only'],ans:0,exp:'Heine-Cantor: uniformly continuous'},
+  ],
+};
+
+const IMG_MODES=[{id:'svg',label:'✏️ SVG'},{id:'canvas',label:'📊 Canvas'},{id:'dalle',label:'🖼 DALL-E 3'},{id:'desc',label:'📝 บรรยาย'}];
+const IMG_QUICK=['Unit Circle','Fourier Transform','กราฟ y=sin(x)','Fibonacci Spiral','Mandelbrot Set','3D z=sin(x)cos(y)','Euler Identity','Gaussian Bell Curve'];
+const TUTOR_SYS=`คุณคือ APEX AI ครูคณิตศาสตร์ระดับ MIT ที่เข้มงวด
+- ตอบตรง ชัดเจน ไม่อ้อมค้อม ไม่ตามใจ
+- เน้น Mathematical Proof และ Rigor เสมอ
+- บอกตรงๆ ถ้าคำตอบผิด
+- ถ้ามีรูปส่งมา วิเคราะห์อย่างละเอียด
+- ตอบภาษาไทย ใช้สัญลักษณ์คณิตถูกต้อง`;
+const TUTOR_QUICK=['พิสูจน์ √2 อตรรกยะ','อธิบาย ε-δ limit','Stokes Theorem คืออะไร?','SVD ใช้ที่ไหน?','Group Theory พื้นฐาน','Fourier Transform ใช้ที่ไหน?','อธิบาย Eigenvalue','ทำไม e^iπ+1=0?'];
+const EDIT_EX=['เปลี่ยนธีมสีม่วง','เพิ่มวิชา Topology','เพิ่ม Pomodoro Timer','เพิ่ม Dark/Light mode toggle','เพิ่มกราฟแสดง XP progress'];
+
+// ══════════════════════════════
+// NAV
+// ══════════════════════════════
+function goPage(id){
+  qsa('.pg').forEach(p=>p.classList.remove('on'));
+  qsa('.nb').forEach(b=>b.classList.remove('on'));
+  const pg=$('pg-'+id);
+  if(pg){pg.classList.add('on');}
+  const nb=qs(`.nb[data-pg="${id}"]`);
+  if(nb){nb.classList.add('on');}
+  $('scroll').scrollTo(0,0);
+  if(id==='progress') renderProgressPage();
+  if(id==='leaderboard') renderLeaderboard();
+  if(id==='notes') renderNotes();
+}
+
+// ══════════════════════════════
+// COUNCIL
+// ══════════════════════════════
+let councilMode='debate';
+let activeAgents=new Set(['prof','devil','tutor','judge']);
+let uploadedFiles=[];
+let councilLog=''; // full log for follow-up
+let councilRunning=false;
+
+function renderModes(){
+  $('mode-grid').innerHTML=MODES.map(m=>`
+    <div class="mode-card${m.id===councilMode?' on':''}" data-cm="${m.id}"
+      style="--mc:${m.mc};--mcb:${m.mcb};--mcc:${m.mcc}">
+      <span class="mc-icon">${m.icon}</span>
+      <span class="mc-badge">${m.badge}</span>
+      <div class="mc-name">${m.name}</div>
+      <div class="mc-desc">${m.desc}</div>
+    </div>`).join('');
+}
+
+function renderAgents(){
+  const avail=getProviders();
+  $('agent-grid').innerHTML=AGENTS.map(a=>{
+    const on=activeAgents.has(a.id);
+    const prov=avail.includes(PREF[a.id])?PREF[a.id]:(avail[0]||'—');
+    return `<div class="agent-card${on?' on':''}" data-ag="${a.id}" style="--ac:${a.color}">
+      <span class="ac-ico">${a.ico}</span>
+      <div class="ac-name" style="color:${a.color}">${a.name}</div>
+      <div class="ac-role">${a.role}</div>
+      <div class="ac-prov">${prov}</div>
+      <div class="ac-check">${on?'✓':''}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── helpers ──
+function addRoundSep(label){
+  const el=document.createElement('div');
+  el.className='round-sep';
+  el.innerHTML=`<div class="round-sep-line"></div><div class="round-sep-label">${label}</div><div class="round-sep-line r"></div>`;
+  $('arena-msgs').appendChild(el);
+}
+
+function createTurn(agent,roundLabel=''){
+  const el=document.createElement('div');
+  el.className='cturn';
+  const prov=pickProvider(PREF[agent.id]);
+  el.innerHTML=`<div class="cturn-head">
+    <span class="cturn-ico">${agent.ico}</span>
+    <span class="cturn-name" style="color:${agent.color}">${agent.name}</span>
+    <span class="cturn-prov">${prov}</span>
+    <span class="cturn-round">${roundLabel}</span>
+  </div><div class="cturn-body loading">กำลังคิด...</div>
+  <div class="cturn-actions"></div>`;
+  $('arena-msgs').appendChild(el);
+  $('arena-msgs').scrollTop=$('arena-msgs').scrollHeight+5000;
+  return {body:el.querySelector('.cturn-body'),actions:el.querySelector('.cturn-actions'),el};
+}
+
+function createVerdict(agent){
+  const {body,actions,el}=createTurn(agent,'⚖️ ตัดสิน');
+  el.classList.add('verdict');
+  return {body,actions};
+}
+
+function finishTurn(body,text,agent,topic){
+  body.textContent=text;
+  body.classList.remove('loading');
+  // Add action buttons
+  const acts=body.parentElement.querySelector('.cturn-actions');
+  if(acts){
+    acts.innerHTML=`<button class="cturn-act" data-copy="${encodeURIComponent(text)}">📋 Copy</button>
+    <button class="cturn-act" data-drill="${encodeURIComponent(text.slice(0,80))}">🔍 เจาะลึก</button>`;
+  }
+}
+
+// ── COUNCIL RUN ──
+async function runCouncil(){
+  const topic=$('council-topic').value.trim();
+  if(!topic){toast('ใส่หัวข้อก่อน','err');return;}
+  const avail=getProviders();
+  if(!avail.length){toast('ต้องมี AI อย่างน้อย 1 เจ้า','err');goPage('settings');return;}
+  const active=AGENTS.filter(a=>activeAgents.has(a.id));
+  if(!active.length){toast('เลือก AI อย่างน้อย 1 ตัว','err');return;}
+  if(councilRunning){toast('กำลังประชุมอยู่','err');return;}
+  councilRunning=true;
+
+  // Get lang & rounds
+  const rounds=parseInt($('sel-rounds').value)||3;
+  const lang=$('sel-lang').value;
+
+  // Gather files
+  const imgs=uploadedFiles.filter(f=>f.type.startsWith('image/')).map(f=>f.b64);
+  const fileCtx=uploadedFiles.filter(f=>!f.type.startsWith('image/')).map(f=>`[${f.name}]\n${f.content||''}`).join('\n\n');
+  const fullTopic=fileCtx?topic+'\n\nเนื้อหาไฟล์:\n'+fileCtx:topic;
+
+  // Show arena
+  $('arena-msgs').innerHTML='';
+  $('council-arena').style.display='block';
+  $('arena-meta').textContent=`${MODES.find(m=>m.id===councilMode)?.icon} ${councilMode.toUpperCase()} · ${active.length} AI · ${rounds} รอบ`;
+
+  const btn=$('council-go');
+  btn.disabled=true;btn.textContent='⏳ กำลังประชุม...';
+  $('council-stop').style.display='inline-flex';
+
+  councilLog='';
+  try{
+    if(councilMode==='debate') await _debate(fullTopic,active,rounds,imgs,lang);
+    else if(councilMode==='parallel') await _parallel(fullTopic,active,imgs,lang);
+    else if(councilMode==='chain') await _chain(fullTopic,active,rounds,imgs,lang);
+    else if(councilMode==='critique') await _critique(fullTopic,active,imgs,lang);
+    else if(councilMode==='socratic') await _socratic(fullTopic,active,rounds,imgs,lang);
+    else if(councilMode==='roleplay') await _roleplay(fullTopic,active,imgs,lang);
+
+    ST.sessions++;ST.xp+=50;saveS();renderHdr();
+    toast('ประชุมเสร็จ! +50XP 🏛','purple');
+  }catch(e){
+    $('arena-msgs').innerHTML+=`<div class="cturn"><div style="color:var(--red);font-size:.72rem">❌ ${e.message}</div></div>`;
+  }
+  councilRunning=false;
+  btn.disabled=false;btn.textContent='🏛 เปิดประชุมสภา';
+  $('council-stop').style.display='none';
+}
+
+async function _debate(topic,agents,rounds,imgs,lang){
+  const nonJ=agents.filter(a=>a.id!=='judge');
+  const judge=agents.find(a=>a.id==='judge')||AGENTS.find(a=>a.id==='judge');
+  let ctx='';
+
+  for(let r=1;r<=rounds;r++){
+    const labels=['🗡 เปิดประเด็น','⚔️ โต้แย้ง','🎯 สรุปสุดท้าย','🔥 รอบพิเศษ','⚡ ตัดสิน'];
+    addRoundSep(`รอบ ${r} — ${labels[Math.min(r-1,labels.length-1)]}`);
+    for(const ag of nonJ){
+      const {body,actions}=createTurn(ag,`รอบ ${r}`);
+      const prev=ctx?`บริบทก่อน:\n${ctx.slice(-1200)}\n\n`:'';
+      const resp=await ai(`${prev}หัวข้อ: ${topic}\nรอบ ${r} — แสดงจุดยืนของคุณ`,ag.sys,{prov:pickProvider(PREF[ag.id]),imgs:r===1?imgs:[],lang});
+      finishTurn(body,resp,ag,topic);
+      ctx+=`\n[${ag.name} รอบ${r}]: ${resp}`;
+      councilLog+=`\n=== ${ag.name} รอบ${r} ===\n${resp}`;
+      if(!councilRunning) return;
+    }
+  }
+  // Verdict
+  addRoundSep('⚖️ คำตัดสิน');
+  const {body}=createVerdict(judge);
+  const vResp=await ai(`หลังฟังการโต้เถียง:\n${ctx}\n\nสรุป: ใครถูก? ให้คะแนนแต่ละฝ่าย อธิบายเหตุผล`,judge.sys,{prov:pickProvider(PREF[judge.id]),lang});
+  finishTurn(body,vResp,judge,topic);
+  councilLog+=`\n=== ผู้พิพากษา ===\n${vResp}`;
+}
+
+async function _parallel(topic,agents,imgs,lang){
+  addRoundSep('🗣 ทุก AI ตอบพร้อมกัน');
+  const results=await Promise.all(agents.map(async ag=>{
+    const {body}=createTurn(ag,'Parallel');
+    const resp=await ai(topic,ag.sys,{prov:pickProvider(PREF[ag.id]),imgs,lang});
+    finishTurn(body,resp,ag,topic);
+    councilLog+=`\n=== ${ag.name} ===\n${resp}`;
+    return `[${ag.name}]: ${resp}`;
+  }));
+  // Summary
+  addRoundSep('📊 สรุปเปรียบเทียบ');
+  const judge=agents.find(a=>a.id==='judge')||AGENTS.find(a=>a.id==='judge');
+  const {body}=createVerdict(judge);
+  const sum=await ai(`เปรียบเทียบ:\n${results.join('\n\n')}\n\nหัวข้อ: ${topic}\n\nสรุปจุดเหมือน จุดต่าง และคำตอบที่ดีที่สุด`,judge.sys,{prov:pickProvider(PREF[judge.id]),lang});
+  finishTurn(body,sum,judge,topic);
+  councilLog+=`\n=== สรุป ===\n${sum}`;
+}
+
+async function _chain(topic,agents,rounds,imgs,lang){
+  addRoundSep('🔗 ส่งต่อเป็นลูกโซ่');
+  let prev='';
+  for(let r=0;r<rounds&&r<agents.length;r++){
+    const ag=agents[r%agents.length];
+    const {body}=createTurn(ag,`ลูกโซ่ ${r+1}`);
+    const prompt=prev?`หัวข้อ: ${topic}\n\nผู้พูดก่อน:\n${prev}\n\nต่อยอดและพัฒนา`:topic;
+    const resp=await ai(prompt,ag.sys,{prov:pickProvider(PREF[ag.id]),imgs:r===0?imgs:[],lang});
+    finishTurn(body,resp,ag,topic);
+    prev=resp;
+    councilLog+=`\n=== ${ag.name} ===\n${resp}`;
+    if(!councilRunning) return;
+  }
+}
+
+async function _critique(topic,agents,imgs,lang){
+  const answers={};
+  addRoundSep('📝 รอบตอบคำถาม');
+  for(const ag of agents){
+    const {body}=createTurn(ag,'ตอบ');
+    const resp=await ai(topic,ag.sys,{prov:pickProvider(PREF[ag.id]),imgs,lang});
+    finishTurn(body,resp,ag,topic);
+    answers[ag.id]=resp;
+    councilLog+=`\n=== ${ag.name} ===\n${resp}`;
+    if(!councilRunning) return;
+  }
+  addRoundSep('🏆 รอบให้คะแนนกัน');
+  for(const ag of agents){
+    const {body}=createTurn(ag,'วิจารณ์');
+    const others=agents.filter(a=>a.id!==ag.id).map(a=>`[${a.name}]: ${answers[a.id]}`).join('\n\n');
+    const resp=await ai(`ให้คะแนน 0-10 และวิจารณ์:\n${others}\n\nหัวข้อ: ${topic}`,ag.sys,{prov:pickProvider(PREF[ag.id]),lang});
+    finishTurn(body,resp,ag,topic);
+    councilLog+=`\n=== ${ag.name} วิจารณ์ ===\n${resp}`;
+    if(!councilRunning) return;
+  }
+}
+
+async function _socratic(topic,agents,rounds,imgs,lang){
+  const teacher=agents[0];const student=agents[1]||agents[0];
+  addRoundSep('🧩 Socratic Dialogue');
+  let ctx='';
+  for(let i=0;i<rounds*2;i++){
+    const isQ=i%2===0;const ag=isQ?teacher:student;
+    const {body}=createTurn(ag,isQ?'❓ ถาม':'💡 ตอบ');
+    const prompt=isQ
+      ?`หัวข้อ: ${topic}\n${ctx}\nถาม Socratic ครั้ง ${Math.floor(i/2)+1} เพื่อนำสู่ความเข้าใจ`
+      :`${ctx}\nตอบในฐานะ ${student.role}`;
+    const resp=await ai(prompt,ag.sys,{prov:pickProvider(PREF[ag.id]),imgs:i===0?imgs:[],lang});
+    finishTurn(body,resp,ag,topic);
+    ctx+=`\n[${isQ?'ถาม':'ตอบ'}]: ${resp}`;
+    councilLog+=`\n=== ${ag.name} ===\n${resp}`;
+    if(!councilRunning) return;
+  }
+}
+
+async function _roleplay(topic,agents,imgs,lang){
+  const roles=['นักเรียน ม.6 ฉลาด','นักศึกษา MIT','นักวิจัย Fields Medal','คนทั่วไปไม่รู้คณิต','ปัญญาประดิษฐ์'];
+  addRoundSep('🎭 Role Play — หลายมุมมอง');
+  for(let i=0;i<agents.length&&i<roles.length;i++){
+    const ag=agents[i];
+    const {body}=createTurn(ag,roles[i]);
+    const sysR=`${ag.sys}\nรับบทบาท: ${roles[i]}`;
+    const resp=await ai(`หัวข้อ: ${topic}\nอธิบายในมุมมองของ${roles[i]}`,sysR,{prov:pickProvider(PREF[ag.id]),imgs:i===0?imgs:[],lang});
+    finishTurn(body,resp,ag,topic);
+    councilLog+=`\n=== ${ag.name} (${roles[i]}) ===\n${resp}`;
+    if(!councilRunning) return;
+  }
+}
+
+// Follow-up
+async function sendFollowup(){
+  const inp=$('followup-input');const txt=inp.value.trim();
+  if(!txt) return;
+  inp.value='';inp.style.height='auto';
+  const msgs=$('followup-msgs');
+  const udiv=document.createElement('div');udiv.className='cm user';udiv.textContent=txt;msgs.appendChild(udiv);msgs.scrollTop=msgs.scrollHeight;
+  const think=document.createElement('div');think.className='cm thinking';think.textContent='กำลังคิด...';msgs.appendChild(think);
+  const judge=AGENTS.find(a=>a.id==='judge');
+  const resp=await ai(`บริบทสภา:\n${councilLog.slice(-2000)}\n\nถามเพิ่ม: ${txt}`,judge?.sys||'',{prov:pickProvider('judge'),lang:$('sel-lang').value});
+  think.remove();
+  const adiv=document.createElement('div');adiv.className='cm ai';adiv.textContent=resp;msgs.appendChild(adiv);msgs.scrollTop=msgs.scrollHeight;
+}
+
+// ══════════════════════════════
+// FILE UPLOAD
+// ══════════════════════════════
+async function handleFiles(files,target='council'){
+  const arr=[...files];
+  for(const f of arr){
+    if(f.size>10*1024*1024){toast(f.name+' ใหญ่เกิน 10MB','err');continue;}
+    await new Promise(res=>{
+      const r=new FileReader();
+      r.onload=e=>{
+        const obj={name:f.name,type:f.type,b64:e.target.result};
+        if(f.type.startsWith('text/')||/\.(txt|md|js|py|json|csv|html)$/i.test(f.name)){
+          try{obj.content=atob(e.target.result.split(',')[1]);}catch{}
+        }
+        if(target==='council') uploadedFiles.push(obj);
+        else tutorFiles.push(obj);
+        res();
+      };r.readAsDataURL(f);
+    });
+  }
+  if(target==='council') renderFileChips();
+  else renderTutorChips();
+  toast(`อัปโหลด ${arr.length} ไฟล์ ✅`);
+}
+
+function renderFileChips(){
+  $('file-chips').innerHTML=uploadedFiles.map((f,i)=>`
+    <div class="fchip">
+      ${f.type.startsWith('image/')?'🖼':'📄'}
+      <span>${esc(f.name)}</span>
+      <span class="fchip-rm" data-rm="${i}">✕</span>
+    </div>`).join('');
+}
+
+let tutorFiles=[];
+function renderTutorChips(){
+  $('tutor-chips').innerHTML=tutorFiles.map((f,i)=>`
+    <div class="fchip" style="font-size:.48rem">
+      ${f.type.startsWith('image/')?'🖼':'📄'} ${esc(f.name.slice(0,14))}
+      <span class="fchip-rm" data-tfi="${i}">✕</span>
+    </div>`).join('');
+}
+
+// ══════════════════════════════
+// TUTOR
+// ══════════════════════════════
+let tutorHist=[];
+function addMsg(role,text){
+  tutorHist.push({role,text});
+  const msgs=$('tutor-msgs');
+  const div=document.createElement('div');
+  div.className='cm '+(role==='user'?'user':'ai');
+  div.textContent=text;
+  msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
+}
+async function sendTutor(){
+  const inp=$('tutor-in');const txt=inp.value.trim();
+  if(!txt&&!tutorFiles.length) return;
+  inp.value='';inp.style.height='auto';
+  const imgs=tutorFiles.filter(f=>f.type.startsWith('image/')).map(f=>f.b64);
+  if(txt) addMsg('user',txt);
+  tutorFiles=[];renderTutorChips();
+  const btn=$('tutor-send');btn.disabled=true;
+  const think=document.createElement('div');think.className='cm thinking';think.textContent='กำลังคิด...';
+  $('tutor-msgs').appendChild(think);$('tutor-msgs').scrollTop=$('tutor-msgs').scrollHeight;
+  const ctx=tutorHist.slice(-8).map(h=>(h.role==='user'?'นักเรียน':'ครู')+': '+h.text).join('\n');
+  const resp=await ai(ctx?ctx+'\nนักเรียน: '+(txt||'วิเคราะห์รูปนี้'):txt||'วิเคราะห์รูปนี้',TUTOR_SYS,{imgs});
+  think.remove();addMsg('ai',resp);btn.disabled=false;
+}
+
+// ══════════════════════════════
+// IMAGE GEN
+// ══════════════════════════════
+let imgMode='svg';let imgGal=ls.get('apex5_gal',[]);let lastImgP='';
+
+function renderImgModes(){
+  $('img-modes').innerHTML=IMG_MODES.map(m=>`<button class="pill${m.id===imgMode?' on':''}" data-imode="${m.id}">${m.label}</button>`).join('');
+}
+function renderImgQuick(){
+  $('img-quick').innerHTML=IMG_QUICK.map(p=>`<button class="pill" style="border-color:rgba(204,136,255,.2);color:var(--purple)" data-iq="${p}">${p}</button>`).join('');
+}
+function renderImgGal(){
+  if(!imgGal.length){$('img-gallery-wrap').style.display='none';return;}
+  $('img-gallery-wrap').style.display='block';
+  $('img-gallery').innerHTML=imgGal.slice(-8).reverse().map(item=>`
+    <div style="border-radius:10px;overflow:hidden;border:1px solid var(--b1);background:var(--p2);aspect-ratio:1;cursor:pointer">
+      ${item.type==='svg'?item.data:`<img src="${item.data}" style="width:100%;height:100%;object-fit:cover">`}
+    </div>`).join('');
+}
+
+async function genImage(){
+  const prompt=$('img-prompt').value.trim();
+  if(!prompt){toast('ใส่คำอธิบายก่อน','err');return;}
+  lastImgP=prompt;
+  const style=$('img-style').value;
+  const styleDesc={
+    'math-diagram':'แผนภาพคณิตศาสตร์ชัดเจน label ครบ',
+    'infographic':'infographic สวยงาม จัดระเบียบดี',
+    '3d-graph':'กราฟ 3 มิติ perspective',
+    'sketch':'sketch ดินสอ handdrawn',
+    'neon':'neon glow บน background มืด',
+    'minimal':'เรียบง่าย ขาวดำ minimal',
+    'colorful':'สีสันจัด สดใส',
+  }[style]||style;
+
+  $('img-wrap').style.display='block';
+  $('img-loader').style.display='flex';
+  $('img-out').style.display='none';
+  $('img-canvas').style.display='none';
+  $('img-svg-wrap').style.display='none';
+  $('img-svg-wrap').innerHTML='';
+
+  if(imgMode==='svg'){
+    $('img-status-txt').textContent='Claude สร้าง SVG...';
+    const size={square:'500x500',wide:'700x400',tall:'400x700'}[$('img-size').value]||'500x500';
+    const [w,h]=size.split('x');
+    const resp=await ai(
+      `สร้าง SVG ภาพคณิตศาสตร์: ${prompt}\nสไตล์: ${styleDesc}\nขนาด ${w}×${h}\n\nกฎ: ตอบ SVG code เท่านั้น เริ่ม <svg... สี neon บน bg #0a0a14 มี label อังกฤษ/ไทย`,
+      'ตอบ SVG code เท่านั้น ไม่มี markdown ไม่มี backtick ไม่มีข้อความอื่น'
+    );
+    const match=resp.match(/<svg[\s\S]*?<\/svg>/i);
+    $('img-loader').style.display='none';
+    if(match){
+      $('img-svg-wrap').style.display='block';
+      $('img-svg-wrap').innerHTML=match[0];
+      const svgEl=$('img-svg-wrap').querySelector('svg');
+      if(svgEl) svgEl.style.cssText='width:100%;height:auto;max-height:420px;display:block';
+      imgGal.push({type:'svg',data:$('img-svg-wrap').innerHTML,prompt});
+      ls.set('apex5_gal',imgGal.slice(-20));renderImgGal();
+      $('img-used').style.display='block';$('img-used').textContent='Prompt: '+prompt;
+      addXP(15);
+    } else {$('img-status-txt').textContent='⚠️ '+resp.slice(0,80);}
+  }
+  else if(imgMode==='canvas'){
+    $('img-status-txt').textContent='สร้าง Canvas...';
+    const code=await ai(
+      `สร้าง JavaScript canvas: ${prompt}\nสไตล์: ${styleDesc}\ncanvas.width=480;canvas.height=480\nbg:#0a0a14 สี neon มี grid+label\n\nตอบ JS code เท่านั้น`,
+      'ตอบ JavaScript เท่านั้น ไม่มี markdown ไม่มี function wrapper'
+    );
+    const cv=$('img-canvas');cv.width=480;cv.height=480;
+    const ctx2d=cv.getContext('2d');
+    $('img-loader').style.display='none';cv.style.display='block';
+    try{
+      new Function('canvas','ctx',code.replace(/```(?:javascript|js)?|```/g,'').trim())(cv,ctx2d);
+      const url=cv.toDataURL();
+      imgGal.push({type:'canvas',data:url,prompt});
+      ls.set('apex5_gal',imgGal.slice(-20));renderImgGal();
+      $('img-used').style.display='block';$('img-used').textContent='Prompt: '+prompt;
+      addXP(15);
+    }catch(e){ctx2d.fillStyle='#ff2255';ctx2d.font='14px monospace';ctx2d.fillText('Error: '+e.message,10,30);}
+  }
+  else if(imgMode==='dalle'){
+    if(!KY.openai){toast('ต้องใส่ OpenAI Key','err');$('img-loader').style.display='none';return;}
+    $('img-status-txt').textContent='DALL-E 3 กำลังวาด...';
+    const sizes={square:'1024x1024',wide:'1792x1024',tall:'1024x1792'}[$('img-size').value]||'1024x1024';
+    try{
+      const r=await fetch('https://api.openai.com/v1/images/generations',{method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+KY.openai},
+        body:JSON.stringify({model:'dall-e-3',prompt:`Math illustration: ${prompt}, style: ${styleDesc}, dark neon background, educational, high quality, clear labels`,n:1,size:sizes})});
+      const d=await r.json();
+      if(d.data?.[0]?.url){
+        $('img-out').src=d.data[0].url;$('img-out').style.display='block';$('img-loader').style.display='none';
+        imgGal.push({type:'dalle',data:d.data[0].url,prompt});
+        ls.set('apex5_gal',imgGal.slice(-20));renderImgGal();addXP(20);
+        $('img-used').style.display='block';$('img-used').textContent='Prompt: '+prompt;
+      }else throw new Error(d.error?.message||'ไม่ได้รับภาพ');
+    }catch(e){$('img-status-txt').textContent='❌ '+e.message;$('img-loader').style.display='none';}
+  }
+  else if(imgMode==='desc'){
+    $('img-status-txt').textContent='AI กำลังบรรยาย...';
+    const resp=await ai(`บรรยายภาพคณิตศาสตร์นี้อย่างละเอียด ราวกับมองภาพจริงๆ รวมสี เส้น label ความหมาย: ${prompt}\nสไตล์: ${styleDesc}`,'บรรยายภาพอย่างละเอียด');
+    $('img-loader').style.display='none';
+    $('img-svg-wrap').style.display='block';
+    $('img-svg-wrap').innerHTML=`<div style="padding:1rem;font-size:.74rem;line-height:1.9;color:var(--tx);white-space:pre-wrap;text-align:left">${esc(resp)}</div>`;
+    addXP(5);
+  }
+}
+
+async function enhancePrompt(){
+  const p=$('img-prompt').value.trim();if(!p){toast('ใส่ prompt ก่อน','err');return;}
+  toast('AI กำลังปรับ...','purple');
+  const r=await ai(`ปรับ prompt นี้ให้ได้ภาพคณิตศาสตร์ที่ดีขึ้นมาก ตอบเฉพาะ prompt ใหม่ ภาษาอังกฤษ:\n"${p}"`,'ตอบ prompt ใหม่เท่านั้น ไม่มี quote ไม่มีคำอธิบาย');
+  $('img-prompt').value=r.replace(/['"]/g,'').trim();toast('ปรับ prompt แล้ว ✅');
+}
+
+// ══════════════════════════════
+// HOME
+// ══════════════════════════════
+let dailyIdx=0;
+function renderHome(){
+  const name=ST.name||'นักคณิต';
+  $('greet-h').textContent='สวัสดี '+name+'! 👋';
+  const gmap={mit:'🎓 เข้า MIT',olympiad:'🏆 IMO',exam:'📝 สอบ',startup:'🚀 Startup',research:'🔬 PhD'};
+  $('greet-p').textContent=(gmap[ST.goal]||'เรียนคณิต')+' · APEX AI Council';
+  renderHdr();
+  // API banner
+  const avail=getProviders();
+  const c=avail.length>=4?'var(--green)':avail.length>=2?'var(--gold)':'var(--red)';
+  $('api-banner').innerHTML=`<div style="display:flex;align-items:center;gap:.5rem"><div style="font-size:1rem">🔑</div><div><div style="font-weight:700;color:${c};font-size:.74rem">AI พร้อม ${avail.length} เจ้า</div><div style="font-family:'IBM Plex Mono';font-size:.45rem;color:var(--mu);margin-top:.06rem">${avail.join(' · ')}</div></div><button class="btn bghost" onclick="goPage('settings')" style="font-size:.6rem;margin-left:auto">+ เพิ่ม</button></div>`;
+  // Daily
+  const d=DAILYS[dailyIdx%DAILYS.length];$('daily-q').textContent=d.q;$('daily-ans').style.display='none';
+  // Quick topics
+  $('quick-topics').innerHTML=QUICK_TOPICS.map(qt=>`
+    <div class="qt-card" data-qt="${encodeURIComponent(qt.txt)}" data-qt-mode="${qt.mode}">
+      <div class="qt-ico">${qt.ico}</div>
+      <div class="qt-text">${qt.txt}</div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════
+// ROADMAP
+// ══════════════════════════════
+function renderRoad(){
+  $('road-list').innerHTML=ROADMAP.map(r=>{
+    const done=ST.done.includes(r.id);
+    return `<div class="rn">
+      <div class="rd ${r.tier}${done?' done':''}" data-rid="${r.id}">${done?'✓':r.n}</div>
+      <div class="rc${done?' done':''}">
+        <h3>${r.ico} ${esc(r.title)} <span style="font-size:.55rem;color:var(--mu);font-family:'IBM Plex Mono'">${r.y}</span></h3>
+        <p>${esc(r.desc)}</p>
+        <div class="rtags">${r.tags.map(t=>`<span class="rt ${r.tier.slice(1)}">${t}</span>`).join('')}</div>
+        <div class="brow" style="margin-top:.38rem"><button class="btn bghost" style="font-size:.58rem;padding:.2em .6em" data-rask="${r.id}">🏛 ถามสภา</button></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════
+// COURSES
+// ══════════════════════════════
+let cf='ทั้งหมด';
+function renderCF(){
+  const cats=['ทั้งหมด',...new Set(COURSES.map(c=>c.cat))];
+  $('course-filter').innerHTML=cats.map(c=>`<button class="pill${c===cf?' on':''}" data-cf="${c}">${c}</button>`).join('');
+}
+function renderCourses(){
+  const list=cf==='ทั้งหมด'?COURSES:COURSES.filter(c=>c.cat===cf);
+  $('course-list').innerHTML=list.map(c=>{
+    const done=ST.cdone.includes(c.id);
+    const dots=Array.from({length:10},(_,i)=>`<span class="dd${i<c.diff?(c.diff>=9?' hot':' on'):''} "></span>`).join('');
+    return `<div class="cc${done?' open':''}" id="cc-${c.id}">
+      <div class="cc-head" data-cid="${c.id}">
+        <span class="cc-code">${c.code}</span>
+        <span class="cc-name">${esc(c.name)}</span>
+        <span class="cc-src">${esc(c.src)}</span>
+        <span class="cc-v">▼</span>
+      </div>
+      <div class="cc-body">
+        <div style="font-size:.72rem;color:var(--mu);line-height:1.78;margin-bottom:.55rem">${esc(c.desc)}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:.22rem;margin-bottom:.42rem">${c.topics.map(t=>`<span class="chip ${t.c}">${t.t}</span>`).join('')}</div>
+        <div class="diff-dots">${dots}<span style="font-family:'IBM Plex Mono';font-size:.42rem;color:var(--mu);margin-left:.28rem">ยาก ${c.diff}/10</span></div>
+        <div style="display:flex;align-items:center;gap:.38rem;margin-top:.45rem">
+          <div class="chkbox${done?' on':''}" data-ckid="${c.id}">${done?'✓':''}</div>
+          <span style="font-size:.68rem;color:var(--mu)">เรียนแล้ว</span>
+          <button class="btn bghost" style="font-size:.58rem;padding:.2em .6em;margin-left:auto" data-cask="${c.id}">🏛 ถามสภา</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════
+// QUIZ
+// ══════════════════════════════
+let qLv='ม.ต้น',qCur=null,qAns=false;
+function renderQF(){
+  $('quiz-filter').innerHTML=Object.keys(QUIZ_BANK).map(l=>`<button class="pill${l===qLv?' on':''}" data-ql="${l}">${l}</button>`).join('');
+}
+function loadQ(lv){qLv=lv;$('q-lvl').textContent=lv;renderQF();nextQ();}
+function nextQ(){
+  const bank=QUIZ_BANK[qLv]||[];if(!bank.length) return;
+  qCur=bank[Math.floor(Math.random()*bank.length)];qAns=false;
+  $('q-text').textContent=qCur.q;$('q-fb').className='q-fb';$('q-next').style.display='none';
+  $('q-opts').innerHTML=qCur.opts.map((o,i)=>`<button class="qo" data-qi="${i}">${o}</button>`).join('');
+  if(timerOn) startTimer();
+}
+function answerQ(idx){
+  if(qAns||!qCur) return;qAns=true;
+  if(timerOn) stopTimer();
+  const ok=idx===qCur.ans;ST.qt++;if(ok){ST.qc++;addXP(10);}saveS();
+  $('q-score').textContent=ST.qc;$('q-total').textContent=ST.qt;
+  qsa('#q-opts .qo').forEach((b,i)=>{
+    if(i===qCur.ans)b.classList.add('correct');
+    else if(i===idx&&!ok)b.classList.add('wrong');
+    b.classList.add('disabled');
+  });
+  $('q-fb').className='q-fb '+(ok?'c':'w');$('q-fb').textContent=(ok?'✅ ':'❌ ')+qCur.exp;
+  $('q-next').style.display='inline-flex';
+}
+async function aiGenQ(){
+  const s=$('q-ai-gen-status');s.style.display='block';
+  $('q-opts').innerHTML='';$('q-text').textContent='⏳ AI สร้างโจทย์...';
+  const resp=await ai(`สร้างข้อสอบคณิต 1 ข้อ ระดับ ${qLv} ตอบ JSON:\n{"q":"โจทย์","opts":["A","B","C","D"],"ans":0,"exp":"อธิบาย"}\nans=index ที่ถูก ตอบ JSON เท่านั้น`,'ตอบ JSON ล้วนๆ ไม่มี markdown',{maxTok:300});
+  s.style.display='none';
+  try{
+    const d=JSON.parse(resp.replace(/```json|```/g,'').trim());
+    if(d.q&&d.opts){qCur=d;qAns=false;$('q-text').textContent=d.q;$('q-fb').className='q-fb';$('q-next').style.display='none';
+      $('q-opts').innerHTML=d.opts.map((o,i)=>`<button class="qo" data-qi="${i}">${o}</button>`).join('');}
+  }catch{$('q-text').textContent='เกิดข้อผิดพลาด ลองใหม่';}
+}
+
+// ══════════════════════════════
+// SELF EDIT
+// ══════════════════════════════
+let pendingCode='';
+function elog(m){const o=$('edit-out');o.textContent+='$ '+m+'\n';o.scrollTop=o.scrollHeight;}
+async function runEdit(){
+  const cmd=$('edit-in').value.trim();if(!cmd){toast('ใส่คำสั่งก่อน','err');return;}
+  const btn=$('edit-run');btn.disabled=true;elog('คำสั่ง: '+cmd);elog('ส่ง AI...');
+  const src=document.documentElement.outerHTML.slice(0,8000);
+  const resp=await ai(`แก้ HTML app ตามคำสั่ง: ${cmd}\n\nกฎ: ตอบ HTML ล้วนๆ เริ่ม <!DOCTYPE html>\n\nSOURCE:\n${src}...`,'expert frontend dev ตอบ HTML เท่านั้น',{maxTok:4000});
+  if(resp.includes('<!DOCTYPE')||resp.includes('<html')){
+    pendingCode=resp;elog('✅ เสร็จ → Preview หรือ Apply');
+    $('edit-preview').style.display='inline-flex';$('edit-apply').style.display='inline-flex';$('edit-revert').style.display='inline-flex';
+  }else elog('⚠️ '+resp.slice(0,120));
+  btn.disabled=false;
+}
+
+// ══════════════════════════════
+// EVENTS
+// ══════════════════════════════
+document.addEventListener('click',async e=>{
+  const t=e.target;
+
+  // NAV
+  const nb=t.closest('.nb');
+  if(nb){goPage(nb.dataset.pg);return;}
+
+  // MODE
+  const mc=t.closest('.mode-card');
+  if(mc?.dataset.cm){councilMode=mc.dataset.cm;renderModes();return;}
+
+  // AGENT
+  const ac=t.closest('.agent-card');
+  if(ac?.dataset.ag){
+    const id=ac.dataset.ag;
+    if(activeAgents.has(id))activeAgents.delete(id);else activeAgents.add(id);
+    renderAgents();renderHdr();return;
+  }
+
+  // COUNCIL
+  if(t.id==='council-go'){await runCouncil();return;}
+  if(t.id==='council-stop'){councilRunning=false;return;}
+  if(t.id==='topic-clear-btn'){$('council-topic').value='';uploadedFiles=[];renderFileChips();$('council-arena').style.display='none';return;}
+  if(t.id==='followup-send'){await sendFollowup();return;}
+  if(t.id==='export-txt-btn'){
+    try{await navigator.clipboard.writeText(councilLog);toast('Copy แล้ว! ✅');}
+    catch{toast('ไม่สามารถ Copy','err');}
+    return;
+  }
+  if(t.id==='export-new-btn'){$('arena-msgs').innerHTML='';$('council-arena').style.display='none';councilLog='';$('council-topic').value='';uploadedFiles=[];renderFileChips();return;}
+
+  // CTURN ACTIONS
+  if(t.dataset.copy){try{await navigator.clipboard.writeText(decodeURIComponent(t.dataset.copy));toast('Copy แล้ว');}catch{}return;}
+  if(t.dataset.drill){$('council-topic').value='เจาะลึก: '+decodeURIComponent(t.dataset.drill);return;}
+
+  // TOPIC QUICK
+  if(t.dataset.tq){$('council-topic').value=decodeURIComponent(t.dataset.tq);if(t.dataset['qt-mode']||t.closest('[data-qt-mode]')){councilMode=t.dataset['qt-mode']||(t.closest('[data-qt-mode]')?.dataset['qt-mode']||councilMode);renderModes();}goPage('council');return;}
+  const qtCard=t.closest('.qt-card');
+  if(qtCard?.dataset.qt){$('council-topic').value=decodeURIComponent(qtCard.dataset.qt);councilMode=qtCard.dataset.qtMode||councilMode;renderModes();goPage('council');return;}
+  if(t.dataset.tq2){$('council-topic').value=t.dataset.tq2;return;}
+
+  // FILE CHIPS
+  if(t.dataset.rm!==undefined){uploadedFiles.splice(+t.dataset.rm,1);renderFileChips();return;}
+  if(t.dataset.tfi!==undefined){tutorFiles.splice(+t.dataset.tfi,1);renderTutorChips();return;}
+
+  // HOME
+  if(t.id==='daily-reveal'){const d=DAILYS[dailyIdx%DAILYS.length];$('daily-ans').textContent=d.a;$('daily-ans').style.display='block';addXP(5);return;}
+  if(t.id==='daily-new'){dailyIdx++;renderHome();return;}
+  if(t.id==='daily-council'){const d=DAILYS[dailyIdx%DAILYS.length];$('council-topic').value=d.q;goPage('council');return;}
+
+  // ROADMAP
+  if(t.classList.contains('rd')&&t.dataset.rid){
+    const id=t.dataset.rid;const i=ST.done.indexOf(id);
+    if(i===-1){ST.done.push(id);addXP(20);}else ST.done.splice(i,1);
+    saveS();renderRoad();renderHdr();return;
+  }
+  if(t.dataset.rask){const r=ROADMAP.find(x=>x.id===t.dataset.rask);if(r){$('council-topic').value='อธิบาย '+r.title+' อย่างละเอียดพร้อม proof';goPage('council');}return;}
+
+  // COURSES
+  const ch=t.closest('.cc-head');
+  if(ch?.dataset.cid){$('cc-'+ch.dataset.cid)?.classList.toggle('open');return;}
+  if(t.classList.contains('chkbox')&&t.dataset.ckid){
+    const id=t.dataset.ckid;const i=ST.cdone.indexOf(id);
+    if(i===-1){ST.cdone.push(id);addXP(15);}else ST.cdone.splice(i,1);
+    saveS();renderCourses();return;
+  }
+  if(t.dataset.cask){const c=COURSES.find(x=>x.id===t.dataset.cask);if(c){$('council-topic').value='อธิบาย '+c.name+' อย่างครบถ้วน';goPage('council');}return;}
+  if(t.dataset.cf){cf=t.dataset.cf;renderCF();renderCourses();return;}
+
+  // QUIZ
+  if(t.dataset.ql){loadQ(t.dataset.ql);return;}
+  if(t.classList.contains('qo')&&t.dataset.qi!==undefined){answerQ(+t.dataset.qi);return;}
+  if(t.id==='q-next'){nextQ();return;}
+  if(t.id==='q-explain'){if(qCur){$('tutor-in').value='อธิบาย: '+qCur.q;goPage('tutor');}return;}
+  if(t.id==='q-ai-gen'){await aiGenQ();return;}
+  if(t.id==='q-to-council'){if(qCur){$('council-topic').value=qCur.q;goPage('council');}return;}
+
+  // TUTOR
+  if(t.id==='tutor-send'){await sendTutor();return;}
+  if(t.id==='tutor-att-btn'){$('tutor-file-in').click();return;}
+  if(t.dataset.qp){$('tutor-in').value=t.dataset.qp;await sendTutor();return;}
+
+  // IMAGE
+  if(t.dataset.imode){imgMode=t.dataset.imode;renderImgModes();return;}
+  if(t.dataset.iq){$('img-prompt').value=t.dataset.iq;return;}
+  if(t.id==='img-gen'){await genImage();return;}
+  if(t.id==='img-enhance'){await enhancePrompt();return;}
+  if(t.id==='img-save'){
+    const cv=$('img-canvas');const im=$('img-out');
+    const a=document.createElement('a');a.download='apex-math.png';
+    if(cv.style.display!=='none')a.href=cv.toDataURL();
+    else if(im.style.display!=='none')a.href=im.src;
+    else{toast('ไม่มีภาพ','err');return;}
+    a.click();return;
+  }
+  if(t.id==='img-redo'){await genImage();return;}
+  if(t.id==='img-to-council'){$('council-topic').value='วิเคราะห์ภาพ: '+lastImgP;goPage('council');return;}
+
+  // EDIT
+  if(t.id==='edit-run'){await runEdit();return;}
+  if(t.dataset.ex){$('edit-in').value=t.dataset.ex;return;}
+  if(t.id==='edit-preview'){if(pendingCode){$('edit-preview-wrap').style.display='block';$('edit-iframe').srcdoc=pendingCode;}return;}
+  if(t.id==='edit-apply'){if(pendingCode&&confirm('Apply แล้วโหลดหน้าใหม่?')){const b=new Blob([pendingCode],{type:'text/html'});window.location.href=URL.createObjectURL(b);}return;}
+  if(t.id==='edit-revert'){pendingCode='';$('edit-preview-wrap').style.display='none';$('edit-apply').style.display='none';$('edit-revert').style.display='none';return;}
+
+  // SETTINGS
+  if(t.id==='reset-btn'){if(confirm('รีเซ็ต progress ทั้งหมด?')){ST.done=[];ST.cdone=[];ST.xp=0;ST.streak=0;ST.qc=0;ST.qt=0;ST.sessions=0;saveS();renderHome();renderRoad();renderCourses();toast('รีเซ็ตแล้ว','gold');}return;}
+  if(t.id==='key-row'){goPage('settings');return;}
+
+  // NOTES
+  if(t.id==='note-save-btn'){saveNote();return;}
+  if(t.id==='note-export-btn'){exportNotes();return;}
+  if(t.dataset.ndel){deleteNote(+t.dataset.ndel);return;}
+  if(t.dataset.nf){noteFilter=t.dataset.nf;renderNotes();return;}
+
+  // LEADERBOARD
+  if(t.dataset.lbs){lbSort=t.dataset.lbs;renderLeaderboard();return;}
+
+  // PROGRESS / REMINDER
+  if(t.id==='export-progress-btn'){exportProgressReport();return;}
+  if(t.id==='reminder-set-btn'){setReminderTime();return;}
+  if(t.dataset.sw){
+    const remSettings=ls.get('apex5_reminders',{daily:false,streak:false,dailyTime:'19:00'});
+    const sw=t.dataset.sw;
+    remSettings[sw]=!remSettings[sw];
+    ls.set('apex5_reminders',remSettings);
+    t.className='sw'+(remSettings[sw]?' on':'');
+    setReminder(sw,remSettings[sw]);
+    renderProgressPage();
+    return;
+  }
+});
+
+// UPLOAD
+$('file-in').addEventListener('change',e=>{handleFiles(e.target.files,'council');});
+$('tutor-file-in').addEventListener('change',e=>{handleFiles(e.target.files,'tutor');});
+$('council-attach').addEventListener('change',e=>{handleFiles(e.target.files,'council');});
+
+const uz=$('upload-zone');
+uz.addEventListener('click',()=>$('file-in').click());
+uz.addEventListener('dragover',e=>{e.preventDefault();uz.classList.add('drag');});
+uz.addEventListener('dragleave',()=>uz.classList.remove('drag'));
+uz.addEventListener('drop',e=>{e.preventDefault();uz.classList.remove('drag');handleFiles(e.dataTransfer.files,'council');});
+
+// KEYBOARD
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey){
+    if(e.target.id==='followup-input'){e.preventDefault();sendFollowup();}
+    else if(e.target.id==='tutor-in'){e.preventDefault();sendTutor();}
+  }
+});
+document.addEventListener('input',e=>{if(e.target.tagName==='TEXTAREA')ar(e.target);});
+
+// ══════════════════════════════
+// 1. DARK/LIGHT MODE TOGGLE
+// ══════════════════════════════
+let isDark = ls.get('apex5_dark', true);
+function applyTheme(){
+  document.body.classList.toggle('light', !isDark);
+  $('theme-toggle').title = isDark ? 'เปลี่ยนเป็น Light Mode' : 'เปลี่ยนเป็น Dark Mode';
+}
+$('theme-toggle').addEventListener('click', ()=>{
+  isDark = !isDark;
+  ls.set('apex5_dark', isDark);
+  applyTheme();
+  toast(isDark ? '🌙 Dark Mode' : '☀️ Light Mode', 'gold');
+});
+
+// ══════════════════════════════
+// 2. QUIZ TIMER
+// ══════════════════════════════
+let timerOn = false, timerInterval = null, timerSec = 30, timerLeft = 30;
+const CIRCUM = 2 * Math.PI * 16; // r=16
+
+function startTimer(){
+  clearInterval(timerInterval);
+  timerLeft = parseInt($('timer-sec-sel').value);
+  timerSec = timerLeft;
+  updateTimerUI();
+  timerInterval = setInterval(()=>{
+    timerLeft--;
+    updateTimerUI();
+    if(timerLeft <= 0){
+      clearInterval(timerInterval);
+      // Auto-answer as wrong if not answered
+      if(qCur && !qAns){
+        answerQ(-1); // force wrong
+        toast('⏰ หมดเวลา!', 'err');
+      }
+    }
+  }, 1000);
+}
+
+function stopTimer(){
+  clearInterval(timerInterval);
+  timerLeft = timerSec;
+  updateTimerUI();
+}
+
+function updateTimerUI(){
+  const arc = $('timer-arc');
+  const num = $('timer-num');
+  const total = parseInt($('timer-sec-sel').value) || 30;
+  const frac = timerLeft / total;
+  const offset = CIRCUM * (1 - frac);
+  arc.style.strokeDashoffset = offset;
+  arc.style.stroke = frac > 0.5 ? 'var(--green)' : frac > 0.25 ? 'var(--gold)' : 'var(--red)';
+  num.textContent = Math.max(0, timerLeft);
+  $('timer-score-lbl').textContent = `${ST.qc}/${ST.qt}`;
+}
+
+$('timer-toggle-btn').addEventListener('click', ()=>{
+  timerOn = !timerOn;
+  $('timer-toggle-btn').textContent = timerOn ? 'ปิด Timer' : 'เปิด Timer';
+  $('timer-toggle-btn').className = timerOn ? 'btn br' : 'btn bghost';
+  $('timer-arc').style.display = timerOn ? 'block' : 'none';
+  $('timer-num').style.opacity = timerOn ? '1' : '0.3';
+  if(!timerOn) stopTimer();
+  toast(timerOn ? '⏱ Timer เปิดแล้ว' : 'Timer ปิด', timerOn ? 'ok' : 'gold');
+});
+
+// Timer ready - hooks are built into nextQ/answerQ directly
+
+// ══════════════════════════════
+// 3. NOTES
+// ══════════════════════════════
+let notes = ls.get('apex5_notes', []);
+let noteFilter = 'all';
+const NOTE_TAGS = {all:'📋 ทั้งหมด', general:'📌 ทั่วไป', proof:'🔬 Proof', formula:'📐 สูตร', idea:'💡 ไอเดีย', quiz:'🎯 Quiz', council:'🏛 สภา'};
+
+function saveNote(){
+  const text = $('note-ta').value.trim();
+  if(!text){ toast('ใส่เนื้อหาก่อน', 'err'); return; }
+  const tag = $('note-tag-sel').value;
+  notes.unshift({ id: Date.now(), text, tag, date: new Date().toLocaleDateString('th-TH') });
+  ls.set('apex5_notes', notes);
+  $('note-ta').value = '';
+  renderNotes();
+  addXP(3);
+  toast('บันทึกโน้ตแล้ว ✅');
+}
+
+function deleteNote(id){
+  notes = notes.filter(n => n.id !== id);
+  ls.set('apex5_notes', notes);
+  renderNotes();
+}
+
+function renderNoteFilter(){
+  $('note-filter').innerHTML = Object.entries(NOTE_TAGS).map(([k,v])=>
+    `<button class="pill${k===noteFilter?' on':''}" data-nf="${k}">${v}</button>`
+  ).join('');
+}
+
+function renderNotes(){
+  renderNoteFilter();
+  const filtered = noteFilter === 'all' ? notes : notes.filter(n => n.tag === noteFilter);
+  if(!filtered.length){
+    $('note-list').innerHTML = '';
+    $('note-empty').style.display = 'block';
+  } else {
+    $('note-empty').style.display = 'none';
+    $('note-list').innerHTML = filtered.map(n => `
+      <div class="note-card">
+        <div class="note-card-top">
+          <span class="note-tag">${NOTE_TAGS[n.tag]||n.tag}</span>
+          <span class="note-date">${n.date}</span>
+        </div>
+        <div class="note-body">${esc(n.text)}</div>
+        <button class="note-del" data-ndel="${n.id}">✕</button>
+      </div>`).join('');
+  }
+}
+
+function exportNotes(){
+  if(!notes.length){ toast('ไม่มีโน้ต', 'err'); return; }
+  const txt = notes.map(n => `[${NOTE_TAGS[n.tag]}] ${n.date}\n${n.text}\n${'─'.repeat(40)}`).join('\n\n');
+  const blob = new Blob([txt], {type:'text/plain;charset=utf-8'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = `apex-notes-${new Date().toISOString().slice(0,10)}.txt`;
+  a.click();
+  toast('Export โน้ตแล้ว ✅');
+}
+
+// ══════════════════════════════
+// 4. PROGRESS CHART
+// ══════════════════════════════
+function getWeeklyData(){
+  const history = ls.get('apex5_xp_history', {});
+  const days = [], labels = [];
+  for(let i=6; i>=0; i--){
+    const d = new Date(Date.now() - i*86400000);
+    const key = d.toDateString();
+    const th = ['อา','จ','อ','พ','พฤ','ศ','ส'][d.getDay()];
+    days.push(history[key] || 0);
+    labels.push(th);
+  }
+  return { days, labels };
+}
+
+function getWeeklyAccuracy(){
+  const history = ls.get('apex5_acc_history', {});
+  const days = [], labels = [];
+  for(let i=6; i>=0; i--){
+    const d = new Date(Date.now() - i*86400000);
+    const key = d.toDateString();
+    const th = ['อา','จ','อ','พ','พฤ','ศ','ส'][d.getDay()];
+    const v = history[key];
+    days.push(v !== undefined ? v : null);
+    labels.push(th);
+  }
+  return { days, labels };
+}
+
+function renderProgressPage(){
+  // XP Chart
+  const xpData = getWeeklyData();
+  const maxXP = Math.max(...xpData.days, 1);
+  $('xp-chart').innerHTML = xpData.days.map((v,i) =>
+    `<div class="bc-bar" style="height:${Math.round((v/maxXP)*100)}%" data-v="${v} XP"></div>`
+  ).join('');
+  $('xp-chart-labels').innerHTML = xpData.labels.map(l =>
+    `<div class="bc-lbl" style="flex:1">${l}</div>`
+  ).join('');
+
+  // Accuracy Chart
+  const accData = getWeeklyAccuracy();
+  const accDays = accData.days.map(v => v === null ? 0 : v);
+  const maxAcc = 100;
+  $('acc-chart').innerHTML = accData.days.map((v,i) =>
+    `<div class="bc-bar" style="height:${v===null?4:Math.round((v/maxAcc)*100)}%;background:${v===null?'var(--b2)':'linear-gradient(to top,var(--gold),var(--orange))'}" data-v="${v===null?'ไม่มีข้อมูล':Math.round(v)+'%'}"></div>`
+  ).join('');
+  $('acc-chart-labels').innerHTML = accData.labels.map(l =>
+    `<div class="bc-lbl" style="flex:1">${l}</div>`
+  ).join('');
+
+  // Stats
+  const weekXP = getWeeklyData().days.reduce((a,b)=>a+b,0);
+  $('prog-week-xp').textContent = weekXP;
+  $('prog-streak').textContent = ST.streak;
+  $('prog-done').textContent = ST.done.length;
+  const acc = ST.qt > 0 ? Math.round(ST.qc/ST.qt*100) : 0;
+  $('prog-acc').textContent = acc + '%';
+
+  // Reminder switches
+  const remSettings = ls.get('apex5_reminders', {daily:false, streak:false, dailyTime:'19:00'});
+  $('sw-daily').className = 'sw' + (remSettings.daily ? ' on' : '');
+  $('sw-streak').className = 'sw' + (remSettings.streak ? ' on' : '');
+  $('reminder-time-inp').value = remSettings.dailyTime || '19:00';
+  $('reminder-daily-time').textContent = remSettings.daily ? `เตือนทุกวัน เวลา ${remSettings.dailyTime}` : 'ยังไม่ได้ตั้ง';
+}
+
+// Record XP daily
+function recordDailyXP(xpAmount){
+  const history = ls.get('apex5_xp_history', {});
+  const key = new Date().toDateString();
+  history[key] = (history[key] || 0) + xpAmount;
+  ls.set('apex5_xp_history', history);
+}
+function recordDailyAcc(){
+  if(ST.qt === 0) return;
+  const history = ls.get('apex5_acc_history', {});
+  const key = new Date().toDateString();
+  history[key] = Math.round(ST.qc/ST.qt*100);
+  ls.set('apex5_acc_history', history);
+}
+
+// XP history is recorded inside addXP directly
+
+// ══════════════════════════════
+// 5. REMINDER / NOTIFICATION
+// ══════════════════════════════
+function setupReminders(){
+  const remSettings = ls.get('apex5_reminders', {daily:false, streak:false, dailyTime:'19:00'});
+  // Request notification permission if needed
+  if((remSettings.daily || remSettings.streak) && Notification.permission === 'default'){
+    Notification.requestPermission();
+  }
+}
+
+function setReminder(type, on){
+  const remSettings = ls.get('apex5_reminders', {daily:false, streak:false, dailyTime:'19:00'});
+  remSettings[type] = on;
+  ls.set('apex5_reminders', remSettings);
+  if(on && Notification.permission === 'default'){
+    Notification.requestPermission().then(p=>{
+      if(p === 'granted') toast('🔔 เปิดการแจ้งเตือนแล้ว!');
+      else toast('⚠️ ไม่ได้รับอนุญาตแจ้งเตือน', 'err');
+    });
+  } else if(on && Notification.permission === 'granted'){
+    toast('🔔 เปิดการแจ้งเตือนแล้ว!');
+  }
+}
+
+function setReminderTime(){
+  const t = $('reminder-time-inp').value;
+  const remSettings = ls.get('apex5_reminders', {daily:false, streak:false, dailyTime:'19:00'});
+  remSettings.dailyTime = t;
+  ls.set('apex5_reminders', remSettings);
+  $('reminder-daily-time').textContent = remSettings.daily ? `เตือนทุกวัน เวลา ${t}` : 'ตั้งเวลาแล้ว (เปิดสวิตช์ด้วย)';
+  toast(`⏰ ตั้งเวลา ${t} แล้ว`);
+}
+
+function checkReminders(){
+  const remSettings = ls.get('apex5_reminders', {daily:false, streak:false, dailyTime:'19:00'});
+  if(!remSettings.daily || Notification.permission !== 'granted') return;
+  const now = new Date();
+  const [h,m] = (remSettings.dailyTime||'19:00').split(':').map(Number);
+  if(now.getHours() === h && now.getMinutes() === m){
+    const lastNotif = ls.get('apex5_last_notif', '');
+    const key = now.toDateString() + remSettings.dailyTime;
+    if(lastNotif !== key){
+      new Notification('⚡ APEX MATH', { body: 'ถึงเวลาเรียนคณิตแล้ว! 🔥 Streak ของคุณกำลังรอ', icon: '' });
+      ls.set('apex5_last_notif', key);
+    }
+  }
+}
+setInterval(checkReminders, 60000);
+
+// ══════════════════════════════
+// 6. LEADERBOARD
+// ══════════════════════════════
+const MOCK_PLAYERS = [
+  {name:'ณัฐวุฒิ K.',xp:4850,streak:42,acc:91,badge:'🥇 Fields'},
+  {name:'พิมพ์ชนก S.',xp:3920,streak:28,acc:88,badge:'🎓 MIT'},
+  {name:'ศุภกร T.',xp:3450,streak:21,acc:85,badge:'⚡ Apex'},
+  {name:'วรัญชลี P.',xp:2980,streak:15,acc:82,badge:'📚 Scholar'},
+  {name:'ธีรภัทร N.',xp:2650,streak:19,acc:79,badge:'🔥 Streak'},
+  {name:'ปภาวิน C.',xp:2200,streak:11,acc:76,badge:'✨ Rising'},
+  {name:'อัญชิสา M.',xp:1870,streak:9,acc:73,badge:'🎯 Sharp'},
+  {name:'กิตติภณ W.',xp:1540,streak:7,acc:70,badge:'📐 Builder'},
+  {name:'สรวิชญ์ A.',xp:1200,streak:5,acc:67,badge:'🌱 Starter'},
+];
+
+let lbSort = 'xp';
+function renderLeaderboard(){
+  const myXP = ST.xp; const myStreak = ST.streak;
+  const myAcc = ST.qt>0 ? Math.round(ST.qc/ST.qt*100) : 0;
+  const myName = ST.name || 'คุณ';
+
+  // Merge with mock
+  const all = [...MOCK_PLAYERS, {name:myName+'(คุณ)', xp:myXP, streak:myStreak, acc:myAcc, badge:'👤 You', isMe:true}];
+  const sorted = [...all].sort((a,b) => b[lbSort] - a[lbSort]);
+  const myRank = sorted.findIndex(p=>p.isMe) + 1;
+
+  // Filter tabs
+  $('lb-filter').innerHTML = [{k:'xp',l:'⚡ XP'},{k:'streak',l:'🔥 Streak'},{k:'acc',l:'🎯 ความแม่น'}].map(f=>
+    `<button class="pill${f.k===lbSort?' on':''}" data-lbs="${f.k}">${f.l}</button>`
+  ).join('');
+
+  $('lb-list').innerHTML = sorted.slice(0,12).map((p,i)=>{
+    const rank = i+1;
+    const rankClass = rank===1?'gold':rank===2?'silver':rank===3?'bronze':'';
+    const rankIcon = rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':'';
+    const val = lbSort==='xp'?`${p.xp} XP`:lbSort==='streak'?`${p.streak} วัน`:`${p.acc}%`;
+    return `<div class="lb-row${p.isMe?' lb-you':''}">
+      <div class="lb-rank ${rankClass}">${rankIcon||rank}</div>
+      <div class="lb-name">${esc(p.name)}</div>
+      <div class="lb-xp">${val}</div>
+      <div class="lb-badge">${p.badge}</div>
+    </div>`;
+  }).join('');
+
+  $('lb-my-rank').textContent = '#'+myRank;
+  $('lb-my-xp').textContent = myXP;
+  $('lb-my-streak').textContent = myStreak+'🔥';
+}
+
+// ══════════════════════════════
+// 7. EXPORT PROGRESS (PDF-style)
+// ══════════════════════════════
+function exportProgressReport(){
+  const acc = ST.qt>0?Math.round(ST.qc/ST.qt*100):0;
+  const weekXP = getWeeklyData().days.reduce((a,b)=>a+b,0);
+  const done = ROADMAP.filter(r=>ST.done.includes(r.id)).map(r=>r.title);
+  const html = `<!DOCTYPE html>
+<html lang="th"><head><meta charset="UTF-8">
+<title>APEX Progress Report</title>
+<style>
+  body{font-family:'Noto Sans Thai',Arial,sans-serif;background:#f8f8ff;color:#1a1a2e;padding:2rem;max-width:700px;margin:auto}
+  h1{color:#5500cc;border-bottom:3px solid #00ff88;padding-bottom:.5rem}
+  .stat{display:inline-block;background:#fff;border:1px solid #dde;border-radius:10px;padding:.8rem 1.2rem;margin:.3rem;text-align:center}
+  .stat .n{font-size:2rem;font-weight:900;color:#00cc66}
+  .stat .l{font-size:.75rem;color:#888}
+  .section{margin-top:1.5rem}
+  .section h2{color:#3300aa;font-size:1rem}
+  .done-item{background:#fff;border:1px solid #dde;border-radius:6px;padding:.4rem .7rem;margin:.2rem 0;font-size:.85rem}
+  .footer{margin-top:2rem;font-size:.7rem;color:#bbb;text-align:center}
+</style></head>
+<body>
+  <h1>⚡ APEX MATH — Progress Report</h1>
+  <div style="color:#888;font-size:.8rem">สร้างเมื่อ: ${new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})}</div>
+  <div style="color:#888;font-size:.8rem">ผู้เรียน: ${ST.name||'ไม่ระบุชื่อ'}</div>
+
+  <div class="section" style="margin-top:1rem">
+    <div class="stat"><div class="n">${ST.xp}</div><div class="l">XP ทั้งหมด</div></div>
+    <div class="stat"><div class="n" style="color:#ff4466">${ST.streak}</div><div class="l">🔥 Streak (วัน)</div></div>
+    <div class="stat"><div class="n" style="color:#ffaa00">${acc}%</div><div class="l">Quiz แม่นยำ</div></div>
+    <div class="stat"><div class="n" style="color:#22aaff">${ST.done.length}</div><div class="l">หัวข้อเรียนแล้ว</div></div>
+    <div class="stat"><div class="n" style="color:#aa55ff">${weekXP}</div><div class="l">XP สัปดาห์นี้</div></div>
+    <div class="stat"><div class="n" style="color:#ff7700">${ST.qt}</div><div class="l">ข้อสอบทำทั้งหมด</div></div>
+  </div>
+
+  <div class="section">
+    <h2>✅ หัวข้อที่เรียนแล้ว (${done.length} หัวข้อ)</h2>
+    ${done.length ? done.map(d=>`<div class="done-item">✓ ${d}</div>`).join('') : '<div style="color:#bbb">ยังไม่ได้ทำเครื่องหมาย</div>'}
+  </div>
+
+  <div class="section">
+    <h2>📝 โน้ตที่บันทึก (${notes.length} รายการ)</h2>
+    ${notes.slice(0,5).map(n=>`<div class="done-item">${NOTE_TAGS[n.tag]} ${n.text.slice(0,60)}${n.text.length>60?'...':''}</div>`).join('') || '<div style="color:#bbb">ยังไม่มีโน้ต</div>'}
+  </div>
+
+  <div class="footer">APEX MATH AI Council · ข้อมูลเก็บในเครื่องคุณเท่านั้น</div>
+  <script>window.onload=()=>window.print()<\/script>
+</body></html>`;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+  toast('เปิด Report แล้ว (กด Ctrl+P เพื่อพิมพ์ PDF)');
+}
+
+// ══════════════════════════════
+// INIT — NEW FEATURES
+// ══════════════════════════════
+function init(){
+  setTimeout(()=>$('splash').classList.add('gone'),3200);
+
+  // Streak
+  const today=new Date().toDateString();
+  if(ST.lastActive!==today){
+    const yest=new Date(Date.now()-86400000).toDateString();
+    ST.streak=ST.lastActive===yest?ST.streak+1:1;
+    ST.lastActive=today;saveS();
+  }
+
+  // Render everything
+  renderModes();
+  renderAgents();
+  renderHome();
+  renderRoad();
+  renderCF();renderCourses();
+  renderQF();loadQ('ม.ต้น');
+  renderImgModes();renderImgQuick();renderImgGal();
+  loadSettings();
+
+  // Topic quick pills
+  $('topic-quick').innerHTML=TOPIC_QUICK.map(p=>`<button class="pill" style="border-color:rgba(204,136,255,.22);color:var(--purple)" data-tq2="${p}">${p}</button>`).join('');
+  document.querySelectorAll('[data-tq2]').forEach(b=>{b.addEventListener('click',()=>{$('council-topic').value=b.dataset.tq2;});});
+
+  // Tutor quick
+  $('tutor-quick').innerHTML=TUTOR_QUICK.map(p=>`<button class="pill" style="border-color:rgba(255,34,85,.2);color:var(--red)" data-qp="${p}">${p}</button>`).join('');
+
+  // Edit examples
+  $('edit-examples').innerHTML=EDIT_EX.map(e=>`<button class="pill" data-ex="${e}">${e}</button>`).join('');
+
+  renderHdr();
+
+  // NEW FEATURES INIT
+  applyTheme();
+  setupReminders();
+  renderNotes();
+  updateTimerUI();
+}
+
+init();
+</script>
+</body>
+</html>
